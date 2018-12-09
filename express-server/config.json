@@ -1,0 +1,10 @@
+{
+	"mongodb": {
+		"auth": false,
+		"username": null,
+		"password": null,
+		"host": "localhost",
+		"port": 27017,
+		"db": "a-forum"
+	}
+}

@@ -1,8 +1,8 @@
 import axios from 'axios';
-
+import conf from '@/../config/config.js';
 export default() => {
 	return axios.create({
-		baseURL: `http://localhost:8081/`
+		baseURL: conf.webApi.address
 	});
 };
 

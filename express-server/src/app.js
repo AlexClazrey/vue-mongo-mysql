@@ -3,10 +3,16 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const morgan = require('morgan');
 const mongoose = require('mongoose');
+const fs = require('fs');
+const path = require('path');
 
 const Post = require('./models/post');
 
-mongoose.connect('mongodb://localhost:27017/a-forum', { useNewUrlParser: true });
+const conf = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'config.json'), 'utf8'));
+const mongoAddr = conf.mongodb.host + ':' + conf.mongodb.port + '/' + conf.mongodb.db;
+const mongoUser = conf.mongodb.auth ? (conf.mongodb.username + ':' + conf.mongodb.password + '@') : '';
+
+mongoose.connect('mongodb://' + mongoUser + mongoAddr, { useNewUrlParser: true });
 var db = mongoose.connection;
 db.on("error", console.error.bind(console, "[Error][MongoDB] Connection Error."));
 db.once("open", console.log.bind(console, "[OK][MongoDB] Connection succeeded."));
