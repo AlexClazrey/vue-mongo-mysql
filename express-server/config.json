@@ -6,5 +6,14 @@
 		"host": "localhost",
 		"port": 27017,
 		"db": "a-forum"
+	},
+	"mysql": {
+		"username": "webforum",
+		"password": "forumIsGood",
+		"host": "localhost",
+		"port": 3306,
+		"db": "aforum",
+		"maxConnection": 100,
+		"debugPool": false
 	}
 }
