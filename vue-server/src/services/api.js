@@ -1,8 +1,8 @@
 import axios from 'axios';
-import conf from '@/../config/config.js';
+import conf from '@/../config.js';
 export default() => {
 	return axios.create({
-		baseURL: conf.webApi.address
+		baseURL: conf.apiServer.address
 	});
 };
 
