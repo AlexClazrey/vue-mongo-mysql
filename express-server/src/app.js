@@ -10,8 +10,8 @@ const PostRouter = require('./router/post-router-mysql');
 // read config and set up mongo connection
 const mongoAddr = conf.mongodb.host + ':' + conf.mongodb.port + '/' + conf.mongodb.db;
 if(conf.mongodb.auth) {
-    const mongoUser = conf.mongodb.auth ? (conf.mongodb.username + ':' + conf.mongodb.password + '@') : '';
-    mongoose.connect('mongodb://' + mongoUser + mongoAddr, { useNewUrlParser: true, auth: {authdb: 'admin'}});
+	console.log(conf);
+    mongoose.connect('mongodb://' + mongoAddr, { user: conf.mongodb.username, pass: conf.mongodb.password, auth: {authdb: 'admin'}});
 } else {
     mongoose.connect('mongodb://' + mongoAddr, { useNewUrlParser: true });
 }
