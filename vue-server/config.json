@@ -1,0 +1,8 @@
+{
+	"webServer": {
+		"address": "localhost"
+	},
+	"apiServer": {
+		"address": "http://localhost:8081/"
+	}
+}
