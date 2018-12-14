@@ -4,10 +4,10 @@ const pool = require('./db');
 // 记得要及时释放连接
 
 async function getList() {
+	var con;
 	try {
-		const con = await pool.aGet();
-		const result = await util.promisify(con.query.bind(con))('select id, title, description from posttest limit 0,20;');
-		return result;
+		con = await pool.aGet();
+		return await pool.aQuery(con, 'select id, title, description from posttest limit 0,20;');
 	} catch (err) {
 		console.log(err);
 	} finally {
@@ -15,7 +15,16 @@ async function getList() {
 	}
 }
 
-
+async function addPost(title, description) {
+	var con;
+	try {
+		
+	} catch (err) {
+		console.log(err);
+	} finally {
+		pool.release(con);
+	}
+}
 
 
 module.exports = {
