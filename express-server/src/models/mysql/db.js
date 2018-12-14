@@ -61,13 +61,18 @@ function releaseConnectionWithLog() {
 	releaseConnection(connection);
 }
 
-async function queryWithLog(connection, ...queryArgs) {
+async function aQueryWithLog(connection, ...queryArgs) {
 	if(connection === undefined) {
 		console.error("[Error][MySQL] query via an undefined connection");
 		throw new Error("[MySQL] query via an undefined connection");
 	}
-	const result = util.promisify(con.query.bind(con))(...queryArgs);
-	retrun result;
+	try {
+		const result = util.promisify(con.query.bind(con))(...queryArgs);
+		retrun result;
+	} catch (err) {
+		console.error("[Error][MySQL] query failed.");
+		throw err;
+	}
 }
 
 module.exports = {
@@ -75,5 +80,5 @@ module.exports = {
 	releaseConnection: releaseConnection,
 	release: releaseConnectionWithLog,
 	aGet: aGetConnectionWithLog,
-	aQuery: queryWithLog,
+	aQuery: aQueryWithLog,
 }
