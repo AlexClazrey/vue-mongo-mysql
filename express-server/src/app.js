@@ -5,7 +5,7 @@ const morgan = require('morgan');
 const mongoose = require('mongoose');
 
 const conf = require('./readConfig');
-const PostRouter = require('./router/post-router');
+const PostRouter = require('./router/post-router-mysql');
 
 // read config and set up mongo connection
 const mongoAddr = conf.mongodb.host + ':' + conf.mongodb.port + '/' + conf.mongodb.db;
@@ -21,7 +21,7 @@ app.use(morgan('combined'));
 app.use(bodyParser.json());
 app.use(cors());
 
-// add router here
+// add routers here
 app.use('/', PostRouter);
 
 // listen

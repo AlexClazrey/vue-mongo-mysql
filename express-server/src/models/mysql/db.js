@@ -36,8 +36,10 @@ function releaseConnection(connection) {
 
 // use it like this
 /*
+	const con;
 	try {
-		const con = await aGetConnectionWithLog();
+		con = await aGetConnectionWithLog();
+		// do your work...
 	} catch (err) {
 		console.log(err);
 	} finally {
@@ -70,7 +72,7 @@ async function aQueryWithLog(connection, ...queryArgs) {
 		const result = util.promisify(connection.query.bind(connection))(...queryArgs);
 		return result;
 	} catch (err) {
-		console.error("[Error][MySQL] query failed.");
+		console.error("[Error][MySQL] query failed.", queryArgs);
 		throw err;
 	}
 }

@@ -19,12 +19,12 @@
 					</tr>
 				</thead>
 				<tbody>
-					<tr v-for="post in posts" :key="post._id">
+					<tr v-for="post in posts" :key="post._id || post.id">
 						<td>{{ post.title }}</td>
 						<td>{{ post.description }}</td>
 						<td class="post-action-cell">
-							<router-link :to="{name:'editPost', params:{id: post._id}}">Edit</router-link>
-							| <a href="#" @click="deletePost(post._id, post.title)">Delete</a>
+							<router-link :to="{name:'editPost', params:{id: post._id || post.id}}">Edit</router-link>
+							| <a href="#" @click="deletePost(post._id || post.id, post.title)">Delete</a>
 						</td>
 					</tr>
 				</tbody>
@@ -79,7 +79,7 @@ export default {
 };
 </script>
 
-<style type="text/css">
+<style type="text/css" scoped>
 table {
 	margin: 0 auto;
 	text-align: center;
