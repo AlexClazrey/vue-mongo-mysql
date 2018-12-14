@@ -1,4 +1,5 @@
 const mysql = require('mysql');
+const util = require('util');
 const conf = require('../../readConfig');
 
 const pool = mysql.createPool({
@@ -12,25 +13,19 @@ const pool = mysql.createPool({
 });
 
 
-// use it like this
-/*
-	const con = await getConnectionPromise().catch(err => { console.log(err); }); 
-	// if error occured con is undefined;
-	if(con === undefined) {
-		// exit routine and send error message to other parts.
-	}
-*/
+// You should not put anything after resolve in Promise to avoid mysterious bug.
+
 function getConnectionPromise() {
 	return new Promise(function(res,rej) {
 		pool.getConnection(function(err,connection) {
 			if(err) {
 				rej(err);
-				return;
+			} else {
+				// you can set triggers here
+				// connection.on('error', function(err) {});
+				res(connection);
+				// You must use releaseConnection(connection) after finishing your work.
 			}
-			// you can set triggers here
-			// connection.on('error', function(err) {});
-			res(connection);
-			// You must use releaseConnection(connection) after finishing your work.
 		});
 	});
 }
@@ -39,18 +34,46 @@ function releaseConnection(connection) {
 	connection.release();
 }
 
-async function wrap(callback) {
-	const con = await getConnectionPromise().catch(err => { console.log(err); });
-	if(con === undefined) {
-		console.log('[Error][MySQL][Connection] connect failed.');
-		return Promise.reject();
+// use it like this
+/*
+	try {
+		const con = await aGetConnectionWithLog();
+	} catch (err) {
+		console.log(err);
+	} finally {
+		releaseConnectionWithLog(con);
 	}
+*/
+async function aGetConnectionWithLog() {
+	try {
+		return await getConnectionPromise();
+	} catch (err) {
+		console.error('[Error][MySQL][Connection] connect failed.');
+		throw err;
+	}
+}
 
+function releaseConnectionWithLog() {
+	if(connection === undefined) {
+		console.log("[Info][MySQL] release an undefined connection");
+		return;
+	}
+	releaseConnection(connection);
+}
+
+async function queryWithLog(connection, ...queryArgs) {
+	if(connection === undefined) {
+		console.error("[Error][MySQL] query via an undefined connection");
+		throw new Error("[MySQL] query via an undefined connection");
+	}
+	const result = util.promisify(con.query.bind(con))(...queryArgs);
+	retrun result;
 }
 
 module.exports = {
 	getConnectionPromise: getConnectionPromise,
 	releaseConnection: releaseConnection,
-	release: releaseConnection,
-	wrap: wrap,
+	release: releaseConnectionWithLog,
+	aGet: aGetConnectionWithLog,
+	aQuery: queryWithLog,
 }
