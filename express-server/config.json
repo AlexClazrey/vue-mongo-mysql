@@ -5,7 +5,7 @@
 		"password": null,
 		"host": "localhost",
 		"port": 27017,
-		"db": "a-forum"
+		"db": "b-forum"
 	},
 	"mysql": {
 		"username": "webforum",

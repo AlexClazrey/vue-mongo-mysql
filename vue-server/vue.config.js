@@ -10,5 +10,8 @@ module.exports = {
 		hot: true,
 		disableHostCheck: true,
 		public: conf.webServer.address,
+	},
+	configureWebpack: {
+		devtool: 'source-map'
 	}
 }

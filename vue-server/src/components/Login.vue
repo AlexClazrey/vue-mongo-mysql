@@ -1,0 +1,86 @@
+<template>
+    <div id="login">
+        <h1>Welcome to our forum!</h1>
+        <div id="login-model">
+            <div id="user-name">
+                <input class="text" type="text" placeholder="User name" v-model="data.name">
+            </div>
+            <div id="user-password">
+                <input class="pass" type="password" placeholder="Password" v-model="data.password">
+            </div>
+            <div id="buttons">
+                <button class="login-confirm" @click="confirmLogin">Login</button>
+                <button class="register" @click="setNewuser">Register</button>
+            </div>
+        </div>
+    </div>
+</template>
+
+<script>
+//import UserService from '../services/user';
+export default {
+    name:'login',
+    data() {
+        return {
+            id: 1,
+            name: 0,
+            password: 0,
+            status: false
+        }
+    },
+    methods: {
+        async confirmLogin(){
+            //const resonse = await UserService.getPassword(this.data.id);
+            if(status){
+                this.status = true;
+                window.alert("success");
+            }else{
+                window.alert("Your username or password is wrong");
+                this.status = false;
+            }
+        },
+        async setNewuser(){
+
+        }
+    }
+}
+</script>
+
+
+<style>
+#login {
+    font-family: monospace;
+    text-align: center;
+    color:teal;
+    margin-top: 200px;
+}
+input {
+    background-repeat: no-repeat;
+    width: 200px;
+    height: 40px;
+    border: 1px solid #e0dede;
+    padding-left: 50px;
+	outline: none;
+    font-family: monospace;
+}
+button {
+    margin-top: 30px;
+    margin-left: 20px;
+    margin-right: 20px;
+    text-align: center;
+    text-decoration: #e0dede;
+    width: 100px;
+    height: 50px;
+    border-radius: 15px;
+    font-family: monospace;
+}
+.text{
+    background-image: url(../assets/user_name.png);
+}
+.pass {
+    background-image: url(../assets/user_password.png);
+}
+.login-confirm {
+    background-color: crimson;
+}
+</style>
