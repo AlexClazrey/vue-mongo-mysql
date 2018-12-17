@@ -10,7 +10,7 @@ router.post('/login', (request, response) => {
     // I found it on stackoverflow
     var ip = request.headers['x-forwarded-for'] || request.connection.remoteAddress;
     user.loginAndCookies(request.body.username, request.body.pass, ip).then(data => {
-        // res is { uid: uid, cookies: cookies } or null
+        // data is { uid: uid, cookies: cookies } or null
         if(data) {
             data.success = true;
             response.send(data);

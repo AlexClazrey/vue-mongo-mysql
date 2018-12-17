@@ -1,8 +1,10 @@
 import api from '@/services/api'
 
 export default{
-    fetchUser() {
-        return api().get('user');
-    },
-    
+    loginAndCookies(username, pass) {
+        return api().post('/user/login', {
+            username,
+            pass
+        });
+    }
 }
