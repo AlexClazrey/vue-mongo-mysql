@@ -6,5 +6,13 @@ export default{
             username,
             pass
         });
+    },
+    userRegister(username,pass,nickname,email){
+        return api().post('/user/register',{
+            username,
+            pass,
+            nickname,
+            email
+        });
     }
 }
