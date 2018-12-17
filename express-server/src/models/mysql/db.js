@@ -1,5 +1,6 @@
 const mysql = require('mysql');
 const util = require('util');
+const crypto = require("crypto");
 const conf = require('../../readConfig');
 
 const pool = mysql.createPool({
@@ -77,10 +78,15 @@ async function aQueryWithLog(connection, ...queryArgs) {
 	}
 }
 
+function makeRandomString() {
+ 	return crypto.randomBytes(20).toString('hex');
+}
+
 module.exports = {
 	getConnectionPromise: getConnectionPromise,
 	releaseConnection: releaseConnection,
 	release: releaseConnectionWithLog,
 	aGet: aGetConnectionWithLog,
 	aQuery: aQueryWithLog,
+	randStr: makeRandomString,
 }
