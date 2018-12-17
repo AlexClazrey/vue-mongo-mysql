@@ -1,16 +1,16 @@
 <template>
     <div id="login">
         <h1>Welcome to our forum!</h1>
-        <div id="login-model">
-            <div id="user-name">
+        <div class="login-model">
+            <div class="user-name">
                 <input class="text" type="text" placeholder="User name" v-model="user_name">
             </div>
-            <div id="user-password">
+            <div class="user-password">
                 <input class="pass" type="password" placeholder="Password" v-model="password">
             </div>
-            <div id="buttons">
+            <div class="buttons">
                 <button class="login-confirm" @click="confirmLogin(user_name, password)">Login</button>
-                <button class="register" @click="Register">Register</button>
+                <button class="register" @click="setNewuser">Register</button>
             </div>
         </div>
     </div>
@@ -24,8 +24,8 @@ export default {
     data() {
         return {
             id: 1,
-            user_name: null,
-            password: null,
+            user_name: '',
+            password: '',
             status: false
         }
     },
@@ -34,7 +34,7 @@ export default {
     },
     methods: {
         async confirmLogin(USER_NAME, PASSWORD){
-            if(USER_NAME == null || PASSWORD == null){
+            if(USER_NAME == '' || PASSWORD == ''){
                 window.alert("Your user name or password is fault!");
             }else{
                 const resonse = await UserService.loginAndCookies(USER_NAME, PASSWORD);
@@ -48,7 +48,7 @@ export default {
             }
         },
         async setNewuser(){
-
+            this.$router.push('/register');
         }
     }
 }
@@ -60,7 +60,7 @@ export default {
     font-family: monospace;
     text-align: center;
     color:teal;
-    margin-top: 200px;
+    margin-top: 100px;
 }
 input {
     background-repeat: no-repeat;
@@ -70,6 +70,7 @@ input {
     padding-left: 50px;
 	outline: none;
     font-family: monospace;
+    margin-top: 10px;
 }
 button {
     margin-top: 30px;
