@@ -24,11 +24,11 @@ async function userLogin(username,password) {
 	}
 }
 
-async function userRegister(username,nickname,password,salt,email) {
+async function userRegister(username,nickname,password,email,portrait) {
 	var con;
 	try {
 		con = await pool.aGet();
-		await pool.aQuery(con, 'call user_register('+con.escape(username)+', '+con.escape(nickname)+','+con.escape(password)+','+con.escape(salt)+','+con.escape(email)+', @uid);');
+		await pool.aQuery(con, 'call user_register('+con.escape(username)+', '+con.escape(nickname)+','+con.escape(password)+','+con.escape(emali)+','+con.escape(portrait)+', @uid);');
 		res = await pool.aQuery(con, 'select @uid;');
 		if(res.length > 0 && res[0]['@uid'] > 0) {
 			return res[0]['@uid']; // login success
@@ -36,7 +36,7 @@ async function userRegister(username,nickname,password,salt,email) {
 			return null; // login failed
 		}
 	} catch (err) {
-		console.error('[Error][MySQL] register failed.', username,nickname,password,salt,email);
+		console.error('[Error][MySQL] register failed.', username,nickname,password,email,portrait);
 		throw err;
 	} finally {
 		pool.release(con);
@@ -48,7 +48,7 @@ async function getuserinfo(uid) {
 	var con;
 	try {
 		con = await pool.aGet();
-		await pool.aQuery(con, 'select username,nickname,password,salt,email from user where id='+con.escape(uid));
+		await pool.aQuery(con, 'select username,nickname,password,email,portrait from user where id='+con.escape(uid));
 	} catch (err) {
 		console.error('[Error][MySQL] getuserinfo failed.', uid);
 		throw err;
@@ -95,7 +95,7 @@ async function loginAndCookies(username, password, ip) {
 }
 
 async function registerAndCookies(username, password, ip) {
-	var uid = await userRegister(username,nickname,password,salt,email);
+	var uid = await userRegister(username,nickname,password,email,portrait);
 	// check if failed uid will be null
 	if(uid) {
 		var cookies = await addCookies(uid, ip);
