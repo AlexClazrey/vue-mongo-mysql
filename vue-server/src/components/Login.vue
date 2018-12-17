@@ -3,10 +3,10 @@
         <h1>Welcome to our forum!</h1>
         <div id="login-model">
             <div id="user-name">
-                <input class="text" type="text" placeholder="User name" v-model="data.name">
+                <input class="text" type="text" placeholder="User name" v-model="user_name">
             </div>
             <div id="user-password">
-                <input class="pass" type="password" placeholder="Password" v-model="data.password">
+                <input class="pass" type="password" placeholder="Password" v-model="password">
             </div>
             <div id="buttons">
                 <button class="login-confirm" @click="confirmLogin">Login</button>
@@ -23,20 +23,20 @@ export default {
     data() {
         return {
             id: 1,
-            name: 0,
-            password: 0,
+            user_name: null,
+            password: null,
             status: false
         }
     },
     methods: {
         async confirmLogin(){
             //const resonse = await UserService.getPassword(this.data.id);
-            if(status){
-                this.status = true;
+            if(this.status){
+                this.status = false;
                 window.alert("success");
             }else{
+                this.status = true;
                 window.alert("Your username or password is wrong");
-                this.status = false;
             }
         },
         async setNewuser(){
