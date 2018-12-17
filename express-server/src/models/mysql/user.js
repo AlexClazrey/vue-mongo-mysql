@@ -29,15 +29,13 @@ async function getPassword(id) {
 	}
 }
 
-async function addPost(title, description) {
+async function Userlogin(username,password) {
 	var con;
 	try {
 		con = await pool.aGet();
-		var cmd = "insert into posttest (title, description) values ";
-		cmd += '(' + con.escape(title) + ',' + con.escape(description) + ');';
-		return await pool.aQuery(con, cmd);
+		return await pool.aQuery(con, 'call user_login('+con.escape(username)+','+con.escape(password)+',@uid;select @uid);');
 	} catch (err) {
-		console.error('[Error][MySQL] addPost error.')
+		console.error('[Error][MySQL] id does not exsit.')
 		throw err;
 	} finally {
 		pool.release(con);
@@ -77,7 +75,7 @@ async function updatePost(id, title, description) {
 module.exports = {
 	getUseridlist,
 	getPassword,
-	addPost,
+	Userlogin,
 	removePost,
 	updatePost,
 };
