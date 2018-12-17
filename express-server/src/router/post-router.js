@@ -25,7 +25,14 @@ router.post('/draft', async (req, res) => {
             // 内容创建成功
             if(req.body.isReply) {
                 // 添加到回复
-                await post.addPostToReply(newPid, req.body.pPid);
+                var success = await post.addPostToReply(newPid, req.body.pPid);
+                if(success == 0) {
+                    res.send({
+                        success: false,
+                        msg: '你不能回复一个回复帖',
+                        pid: newPid
+                    });
+                }
             } else {
                 // 添加到板块
                 await post.addPostToBoard(newPid, req.body.bid);
