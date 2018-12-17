@@ -5,6 +5,7 @@ import Posts from '@/components/PostsList.vue'
 import AddPost from '@/components/AddPost.vue'
 import EditPost from '@/components/EditPost.vue'
 import Login from '@/components/Login.vue'
+import Register from '@/components/Register.vue'
 
 Vue.use(Router)
 
@@ -16,6 +17,11 @@ export default new Router({
       path: '/login',
       name: 'login',
       component: Login
+    },
+    {
+      path: '/register',
+      name: 'register',
+      component: Register
     },
     {
       path: '/',

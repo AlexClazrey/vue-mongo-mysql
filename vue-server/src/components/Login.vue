@@ -9,7 +9,7 @@
                 <input class="pass" type="password" placeholder="Password" v-model="password">
             </div>
             <div id="buttons">
-                <button class="login-confirm" @click="confirmLogin">Login</button>
+                <button class="login-confirm" @click="confirmLogin(user_name, password)">Login</button>
                 <button class="register" @click="Register">Register</button>
             </div>
         </div>
@@ -17,8 +17,8 @@
 </template>
 
 <script>
-//import UserService from '../services/user';
-import Register from '@/Register.vue';
+import UserService from '../services/user';
+import Register from './Register.vue';
 export default {
     name:'login',
     data() {
@@ -29,15 +29,22 @@ export default {
             status: false
         }
     },
+    components: {
+        'Register': Register
+    },
     methods: {
-        async confirmLogin(){
-            //const resonse = await UserService.getPassword(this.data.id);
-            if(this.status){
-                this.status = false;
-                window.alert("success");
+        async confirmLogin(USER_NAME, PASSWORD){
+            if(USER_NAME == null || PASSWORD == null){
+                window.alert("Your user name or password is fault!");
             }else{
-                this.status = true;
-                window.alert("Your username or password is wrong");
+                const resonse = await UserService.loginAndCookies(USER_NAME, PASSWORD);
+                if(resonse.data.success){
+                    this.status = true;
+                    window.alert("success");
+                }else{
+                    this.status = false;
+                    window.alert("Your username or password is wrong");
+                }
             }
         },
         async setNewuser(){
