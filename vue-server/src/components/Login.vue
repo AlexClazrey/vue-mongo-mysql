@@ -3,40 +3,48 @@
         <h1>Welcome to our forum!</h1>
         <div id="login-model">
             <div id="user-name">
-                <input class="text" type="text" placeholder="User name" v-model="data.name">
+                <input class="text" type="text" placeholder="User name" v-model="user_name">
             </div>
             <div id="user-password">
-                <input class="pass" type="password" placeholder="Password" v-model="data.password">
+                <input class="pass" type="password" placeholder="Password" v-model="password">
             </div>
             <div id="buttons">
-                <button class="login-confirm" @click="confirmLogin">Login</button>
-                <button class="register" @click="setNewuser">Register</button>
+                <button class="login-confirm" @click="confirmLogin(user_name, password)">Login</button>
+                <button class="register" @click="Register">Register</button>
             </div>
         </div>
     </div>
 </template>
 
 <script>
-//import UserService from '../services/user';
+import UserService from '../services/user';
+import Register from './Register.vue';
 export default {
     name:'login',
     data() {
         return {
             id: 1,
-            name: 0,
-            password: 0,
+            user_name: null,
+            password: null,
             status: false
         }
     },
+    components: {
+        'Register': Register
+    },
     methods: {
-        async confirmLogin(){
-            //const resonse = await UserService.getPassword(this.data.id);
-            if(status){
-                this.status = true;
-                window.alert("success");
+        async confirmLogin(USER_NAME, PASSWORD){
+            if(USER_NAME == null || PASSWORD == null){
+                window.alert("Your user name or password is fault!");
             }else{
-                window.alert("Your username or password is wrong");
-                this.status = false;
+                const resonse = await UserService.loginAndCookies(USER_NAME, PASSWORD);
+                if(resonse.data.success){
+                    this.status = true;
+                    window.alert("success");
+                }else{
+                    this.status = false;
+                    window.alert("Your username or password is wrong");
+                }
             }
         },
         async setNewuser(){

@@ -10,7 +10,7 @@ async function userLogin(username,password) {
 		// 一个AQUERY只能写一句SQL ！！！
 		await pool.aQuery(con, 'call user_login('+con.escape(username)+', '+con.escape(password)+', @uid);');
 		res = await pool.aQuery(con, 'select @uid;');
-		// by a "console.log(res)" test now I know the format of res is { '@uid' : 1 }  if failed is { '@uid' : null }
+		// by a "console.log(res)" test now I know the format of res is [{ '@uid' : 1 }]  if failed is [{ '@uid' : null }]
 		if(res.length > 0 && res[0]['@uid'] > 0) {
 			return res[0]['@uid']; // login success
 		} else {
