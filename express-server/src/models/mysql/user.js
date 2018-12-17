@@ -7,7 +7,6 @@ async function userLogin(username,password) {
 	var con;
 	try {
 		con = await pool.aGet();
-		// 一个AQUERY只能写一句SQL ！！！
 		await pool.aQuery(con, 'call user_login('+con.escape(username)+', '+con.escape(password)+', @uid);');
 		res = await pool.aQuery(con, 'select @uid;');
 		// by a "console.log(res)" test now I know the format of res is [{ '@uid' : 1 }]  if failed is [{ '@uid' : null }]
@@ -24,11 +23,18 @@ async function userLogin(username,password) {
 	}
 }
 
-async function userregister(username,nickname,password,email) {
+async function userRegister(username,nickname,password,email) {
 	var con;
 	try {
 		con = await pool.aGet();
-		await pool.aQuery(con, 'call user_register('+con.escape(username)+', '+con.escape(nickname)+','+con.escape(password)+',ddddeee,'+con.escape(email)+', @uid);');
+		var salt = pool.randStr();
+		var cmd = 'call user_register('
+			+ con.escape(username)+', '
+			+ con.escape(nickname)+','
+			+ con.escape(password)+',' 
+			+ con.escape(salt) + ','
+			+ con.escape(email)+', @uid);';
+		await pool.aQuery(con, cmd);
 		res = await pool.aQuery(con, 'select @uid;');
 		if(res.length > 0 && res[0]['@uid'] > 0) {
 			return res[0]['@uid']; // Register success
@@ -36,7 +42,7 @@ async function userregister(username,nickname,password,email) {
 			return null; // Register failed
 		}
 	} catch (err) {
-		console.error('[Error][MySQL] register failed.', username,nickname,password,email);
+		console.error('[Error][MySQL] register failed.', cmd);
 		throw err;
 	} finally {
 		pool.release(con);
@@ -44,11 +50,11 @@ async function userregister(username,nickname,password,email) {
 }
 
 //return userinfo
-async function getuserinfo(uid) {
+async function getUserInfo(uid) {
 	var con;
 	try {
 		con = await pool.aGet();
-		await pool.aQuery(con, 'select username,nickname,password,email,portrait from user where id='+con.escape(uid));
+		await pool.aQuery(con, 'select username,nickname,email,portrait from user where id='+con.escape(uid));
 	} catch (err) {
 		console.error('[Error][MySQL] getuserinfo failed.', uid);
 		throw err;
@@ -95,7 +101,7 @@ async function loginAndCookies(username, password, ip) {
 }
 
 async function registerAndCookies(username, nickname, password, email, ip) {
-	var uid = await userregister(username,nickname,password,email);
+	var uid = await userRegister(username,nickname,password,email);
 	// check if failed uid will be null
 	if(uid) {
 		var cookies = await addCookies(uid, ip);
@@ -112,7 +118,7 @@ module.exports = {
 	userLogin,
 	addCookies,
 	loginAndCookies,
-	getuserinfo,
-	userregister,
+	getUserInfo,
+	userregister: userRegister,
 	registerAndCookies,
 }
