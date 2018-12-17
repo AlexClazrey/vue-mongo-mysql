@@ -8,7 +8,7 @@ const mongoose = require('mongoose');
 // const PostRouter = require('./router/post-router-mysql');
 
 const loginRouter = require('./router/login-router');
-
+const uerRegisterRouter = require('./router/userregister-router');
 // set up express server
 const app = express();
 app.use(morgan('combined'));
@@ -18,6 +18,7 @@ app.use(cors());
 // add routers here
 // app.use('/', PostRouter);
 app.use('/user', loginRouter);
+app.use('/user',uerRegisterRouter);
 
 // listen
 app.listen(process.env.PORT || 8081);

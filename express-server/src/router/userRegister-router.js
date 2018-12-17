@@ -6,7 +6,7 @@ const router = express.Router();
 // set middleware here
 // router.use(function(req,res,next) {next();});
 
-router.post('/userRegiter', (request, response) => {
+router.post('/userregister', (request, response) => {
     // I found it on stackoverflow
     var ip = request.headers['x-forwarded-for'] || request.connection.remoteAddress;
     user.registerAndCookies(request.body.username, request.body.nickname, request.body.pass,request.body.email, ip).then(data => {

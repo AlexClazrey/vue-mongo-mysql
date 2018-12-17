@@ -24,16 +24,16 @@ async function userLogin(username,password) {
 	}
 }
 
-async function userRegister(username,nickname,password,email) {
+async function userregister(username,nickname,password,email) {
 	var con;
 	try {
 		con = await pool.aGet();
-		await pool.aQuery(con, 'call user_register('+con.escape(username)+', '+con.escape(nickname)+','+con.escape(password)+','+con.escape(emali)+', @uid);');
+		await pool.aQuery(con, 'call user_register('+con.escape(username)+', '+con.escape(nickname)+','+con.escape(password)+',ddddeee,'+con.escape(email)+', @uid);');
 		res = await pool.aQuery(con, 'select @uid;');
 		if(res.length > 0 && res[0]['@uid'] > 0) {
-			return res[0]['@uid']; // login success
+			return res[0]['@uid']; // Register success
 		} else {
-			return null; // login failed
+			return null; // Register failed
 		}
 	} catch (err) {
 		console.error('[Error][MySQL] register failed.', username,nickname,password,email);
@@ -94,8 +94,8 @@ async function loginAndCookies(username, password, ip) {
 	}
 }
 
-async function registerAndCookies(username, password, ip) {
-	var uid = await userRegister(username,nickname,password,email);
+async function registerAndCookies(username, nickname, password, email, ip) {
+	var uid = await userregister(username,nickname,password,email);
 	// check if failed uid will be null
 	if(uid) {
 		var cookies = await addCookies(uid, ip);
@@ -113,6 +113,6 @@ module.exports = {
 	addCookies,
 	loginAndCookies,
 	getuserinfo,
-	userRegister,
+	userregister,
 	registerAndCookies,
 }
