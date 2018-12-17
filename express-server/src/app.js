@@ -4,8 +4,10 @@ const cors = require('cors');
 const morgan = require('morgan');
 const mongoose = require('mongoose');
 
-const conf = require('./readConfig');
+// const conf = require('./readConfig');
 // const PostRouter = require('./router/post-router-mysql');
+
+const loginRouter = require('./router/login-router');
 
 // set up express server
 const app = express();
@@ -15,6 +17,7 @@ app.use(cors());
 
 // add routers here
 // app.use('/', PostRouter);
+app.use('/user', loginRouter);
 
 // listen
 app.listen(process.env.PORT || 8081);
