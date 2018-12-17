@@ -10,7 +10,7 @@
             </div>
             <div id="buttons">
                 <button class="login-confirm" @click="confirmLogin">Login</button>
-                <button class="register" @click="setNewuser">Register</button>
+                <button class="register" @click="Register">Register</button>
             </div>
         </div>
     </div>
@@ -18,6 +18,7 @@
 
 <script>
 //import UserService from '../services/user';
+import Register from '@/Register.vue';
 export default {
     name:'login',
     data() {
