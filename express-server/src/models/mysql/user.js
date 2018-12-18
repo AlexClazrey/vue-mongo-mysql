@@ -1,5 +1,6 @@
 const pool = require('./db');
 const cook = require('./cookies');
+const group = require('./group');
 
 // 记得要及时释放连接
 
@@ -38,7 +39,10 @@ async function userRegister(username,nickname,password,email) {
 		await pool.aQuery(con, cmd);
 		res = await pool.aQuery(con, 'select @uid;');
 		if(res.length > 0 && res[0]['@uid'] > 0) {
-			return res[0]['@uid']; // Register success
+			var uid = res[0]['@uid'];
+			// add user to default user group
+			await group.addUserToGroup(uid, 1, null);
+			return uid; // Register success
 		} else {
 			return null; // Register failed
 		}

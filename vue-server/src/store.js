@@ -27,6 +27,7 @@ export default new Vuex.Store({
   actions: {
     setUid: async (context, uid) => {
       // use uid to communicate to background to get user info here
+      $.cookie('uid', uid);
       var info = await userApi.getInfo(uid);
       if(info.data && info.data.success) {
         context.commit('setUserInfo', info.data.data);
@@ -36,6 +37,7 @@ export default new Vuex.Store({
       $.cookie('user', cookies);
     },
     removeUserCookies: () => {
+      $.removeCookie('uid');
       $.removeCookie('user');
     }
   }

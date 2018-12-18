@@ -23,12 +23,14 @@ async function addCookies(uid, ip) {
 }
 
 // 更新cookies最后使用时间
-// no return
+// returns 0 or 1
 async function updateCookies(uid, cookies) {
     var con;
     try {
         con = await pool.aGet();
-        await pool.aQuery(con, 'call update_cookies(' + con.escape(uid) + ', ' + con.escape(cookies) + ');');
+        await pool.aQuery(con, 'call update_cookies(' + con.escape(uid) + ', ' + con.escape(cookies) + ', @res);');
+        var res = await pool.aQuery(con, 'select @res;');
+        return res[0]['@res'];
     } catch(err) {
         console.error('[Error][MySQL] update cookies failed', uid, cookies);
     } finally {
@@ -57,7 +59,6 @@ async function checkCookies(uid, cookies) {
     try {
         con = await pool.aGet();
         var cmd = 'call check_cookies(' + con.escape(uid) + ', ' + con.escape(cookies) + ', @res);';
-        console.log(cmd);
         await pool.aQuery(con, cmd);
         var res = await pool.aQuery(con, 'select @res;');
         return res[0]['@res'];

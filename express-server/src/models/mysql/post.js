@@ -45,10 +45,8 @@ async function saveDraft(uid, pid, title, content) {
 			 + con.escape(pid) + ', '
 			 + con.escape(title) + ', '
 			 + con.escape(content) + ', @pid);';
-		console.log(cmd);
 		await pool.aQuery(con, cmd);
 		var res = await pool.aQuery(con, 'select @pid;');
-		console.log(res);
 		return res[0]['@pid'];
 	} catch (err) {
 		console.error('[Error][MySQL] save post failed', cmd);
@@ -89,8 +87,6 @@ async function getList(bid, page) {
 		}
 		page = page > 0 ? page : 1;
 		cmd += ' limit ' + con.escape((page - 1) * pageSize) + ', ' + con.escape(pageSize) + ';';
-		// debug
-		console.log(cmd);
 		var res = await pool.aQuery(con, cmd);
 		return res;
 	} catch (err) {
@@ -146,6 +142,23 @@ async function getReplies(pid, count) {
 	}
 }
 
+// returns bid
+async function getPostBoard(pid) {
+	var con;
+	try {
+		con = await pool.aGet();
+		var cmd = 'call get_post_board(' + con.escape(pid) + ', @res);';
+		await pool.aQuery(con, cmd);
+		var res = await pool.aQuery(con, 'select @res;');
+		return res[0]['@res'];
+	} catch (err) {
+		console.error('[Error][MySQL] get post board failed', cmd);
+		throw err;
+	} finally {
+		pool.release(con);
+	}
+}
+
 module.exports = {
 	addPostToBoard,
 	addPostToReply,
@@ -155,4 +168,5 @@ module.exports = {
 	getListAndReplies,
 	getPost,
 	getReplies,
+	getPostBoard,
 };

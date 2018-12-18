@@ -1,5 +1,6 @@
 const express = require('express');
 const post = require('../models/mysql/post.js');
+const sec = require('../models/mysql/security');
 
 const router = express.Router();
 
@@ -22,6 +23,9 @@ router.get('/', async (req, res) => {
 // save draft
 router.post('/draft', async (req, res) => {
     try {
+        // if has problem, return value will be true
+        if(await sec.autoCheck(req, res, 'commit post'))
+            return;
         var newPid = await post.saveDraft(req.body.uid, req.body.pid, req.body.title, req.body.content)
         if(newPid > 0) {
             // 内容创建成功
@@ -55,6 +59,9 @@ router.post('/draft', async (req, res) => {
 // commit post
 router.post('/', async (req, res) => {
     try {
+        // if has problem, this will be true
+        if(await sec.autoCheck(req, res, 'commit post'))
+            return;
         await post.commitPost(req.body.uid, req.body.pid);
         res.send({success: true});
     } catch (err) {
@@ -93,13 +100,32 @@ router.get('/reply-list/:pid', async(req, res) => {
     } catch (err) {
         res.send({success: false});
     }
-})
+});
 
 // delete draft
+router.delete('/draft/:pid', async (req, res) => {
+    try {
+        
+    } catch(err) {
 
-
+    }
+});
 
 // user delete post
+router.delete('/:pid', async (req, res) => {
+    try {
 
+    } catch(err) {
+        
+    }
+});
+
+router.delete('/admin/:pid', async (req, res) => {
+    try {
+
+    } catch(err) {
+        
+    }
+});
 
 module.exports = router;

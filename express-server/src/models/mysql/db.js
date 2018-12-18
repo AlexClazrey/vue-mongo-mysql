@@ -69,6 +69,7 @@ async function aQueryWithLog(connection, ...queryArgs) {
 		console.error("[Error][MySQL] query via an undefined connection");
 		throw new Error("[MySQL] query via an undefined connection");
 	}
+	console.log('[Info][Query]', ...queryArgs);
 	try {
 		const result = util.promisify(connection.query.bind(connection))(...queryArgs);
 		return result;
