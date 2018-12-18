@@ -46,6 +46,7 @@ export default {
             word: {
                 username: '用户名',
                 pass: '密码',
+                repeatPass: '重复密码',
                 nickname: '昵称',
                 email: '邮箱'
             },
