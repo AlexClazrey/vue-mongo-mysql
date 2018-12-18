@@ -35,10 +35,12 @@
 
 <script>
 import PostsService from '@/services/posts';
+import Boards from './Boards.vue';
 export default {
 	name: 'posts',
 	data() {
 		return {
+			board_id: null,
 			posts: [],
 			loading: true
 		}
@@ -49,13 +51,15 @@ export default {
 		}
 	},
 	mounted() {
-		this.getPosts();
+		this.board_id = this.$route.params.id;
+		this.getPosts(this.board_id);
 	},
 	methods: {
-		async getPosts() {
-			const response = await PostsService.fetchPosts();
+		async getPosts(params) {
+			const response = await PostsService.fetchPosts(params);
 			// there is a loading scene, not displaying no posts...
 			// 这里面还有很多多人在线的话同步刷新的坑
+			console.log(response);
 			this.loading = false;
 			if(response.data.success) {
 				this.posts = response.data.posts;

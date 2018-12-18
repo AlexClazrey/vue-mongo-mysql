@@ -110,6 +110,23 @@ export default {
                     alert('注册失败');
                 }
             }
+            if(this.usernameInvalid || this.passNotMatch) {
+                alertText += '表格填写有错误，不能提交。\n';
+            }
+            if(alertText) {
+                alert(alertText);
+                return;
+            }
+            this.loading = true;
+            var res = await UserService.userRegister(this.table.username, this.table.pass, this.table.nickname, this.table.email);
+            this.loading = false;
+            if(res.data && res.data.success) {
+                alert('注册成功');
+                this.$store.dispatch('setUid', res.data.uid);
+                this.$store.dispatch('setUserCookies', res.data.cookies);
+            } else {
+                alert('注册失败');
+            }
         }
     }
 }
