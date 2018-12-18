@@ -8,16 +8,22 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-    user: null
+    user: null,
+    boards:[]
   },
   getters: {
     uid: (state) => {
       return state.user ? state.user.uid : null;
-    }
+    },
   },
   mutations: {
+<<<<<<< Updated upstream
     setUserInfo(state, userInfo) {
       state.user = userInfo;
+=======
+    setBoards: (state, payload) => {
+      state.boards =  payload;
+>>>>>>> Stashed changes
     }
   },
   actions: {
