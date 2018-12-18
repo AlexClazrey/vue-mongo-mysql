@@ -14,5 +14,8 @@ export default{
             nickname,
             email
         });
+    },
+    getInfo(uid) {
+        return api().get('/user/' + uid);
     }
 }
