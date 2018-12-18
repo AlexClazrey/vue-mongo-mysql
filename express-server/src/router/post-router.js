@@ -8,7 +8,7 @@ const router = express.Router();
 
 router.get('/', async (req, res) => {
     try {
-        var data = await post.getList(req.query.bid, req.query.page);
+        var data = await post.getListAndReplies(req.query.bid, req.query.page);
         res.send({
             success: true,
             data: data
@@ -25,7 +25,7 @@ router.post('/draft', async (req, res) => {
             // 内容创建成功
             if(req.body.isReply) {
                 // 添加到回复
-                var success = await post.addPostToReply(newPid, req.body.pPid);
+                var success = await post.addPostToReply(newPid, req.body.pPid, true);
                 if(success == 0) {
                     res.send({
                         success: false,
@@ -35,7 +35,7 @@ router.post('/draft', async (req, res) => {
                 }
             } else {
                 // 添加到板块
-                await post.addPostToBoard(newPid, req.body.bid);
+                await post.addPostToBoard(newPid, req.body.bid, true);
             }
             res.send({
                 success: true,
@@ -58,5 +58,39 @@ router.post('/', async (req, res) => {
         res.send({success: false});
     }
 })
+
+router.get('/:pid', async(req, res) => {
+    try {
+        var postData = await post.getPost(req.params.pid)
+        if(postData.length == 0) {
+            res.send({
+                success: false,
+                msg: 'No such post'
+            })
+        } else {
+            res.send({
+                success: true,
+                data: postData
+            });
+        }
+    } catch (err) {
+        res.send({success: false});
+    }
+})
+
+// Get post's recent replies list
+router.get('/reply-list/:pid', async(req, res) => {
+    try {
+        var replies = await post.getReplies(req.params.pid, 5);
+        res.send({
+            success: true,
+            data: replies
+        });
+    } catch (err) {
+        res.send({success: false});
+    }
+})
+
+
 
 module.exports = router;
