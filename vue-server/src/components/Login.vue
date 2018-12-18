@@ -3,13 +3,14 @@
         <h1>Welcome to our forum!</h1>
         <div class="login-model">
             <div class="user-name">
-                <input class="text" type="text" placeholder="User name" v-model="user_name">
+                <input class="text" type="text" placeholder="Username" v-model="username">
+                <p v-if="this.username.length > 0 && usernameInvalid">用户名只能由大小写字母和数字组成。</p>
             </div>
             <div class="user-password">
                 <input class="pass" type="password" placeholder="Password" v-model="password">
             </div>
             <div class="buttons">
-                <button class="login-confirm" @click="confirmLogin(user_name, password)">Login</button>
+                <button class="login-confirm" @click="confirmLogin">Login</button>
                 <button class="register" @click="setNewuser">Register</button>
             </div>
         </div>
@@ -18,31 +19,39 @@
 
 <script>
 import UserService from '../services/user';
-import Register from './Register.vue';
 export default {
     name:'login',
     data() {
         return {
-            id: 1,
-            user_name: '',
+            username: '',
             password: '',
-            status: false
         }
     },
     components: {
-        'Register': Register
+    },
+    computed: {
+        usernameInvalid() {
+            return !(this.username.match(/^[a-zA-Z0-9]+$/));
+        },
     },
     methods: {
-        async confirmLogin(USER_NAME, PASSWORD){
-            if(USER_NAME == '' || PASSWORD == ''){
+        async confirmLogin(){
+            // TODO we can do a shake animation here.
+            if(this.usernameInvalid) {
+                alert('用户名格式不正确');
+                return;
+            }
+            this.username = this.username.trim();
+            this.password = this.password.trim();
+            if(this.username == '' || this.password == ''){
                 window.alert("Your user name or password is fault!");
-            }else{
-                const resonse = await UserService.loginAndCookies(USER_NAME, PASSWORD);
-                if(resonse.data.success){
-                    this.status = true;
+            } else {
+                const response = await UserService.loginAndCookies(this.username, this.password);
+                if(response.data.success){
+                    this.$store.dispatch('setUid', response.data.uid);
+                    this.$store.dispatch('setUserCookies', response.data.cookies);
                     window.alert("success");
-                }else{
-                    this.status = false;
+                } else {
                     window.alert("Your username or password is wrong");
                 }
             }

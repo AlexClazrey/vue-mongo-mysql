@@ -1,5 +1,27 @@
 const pool = require('./db');
 
+// return cookies;
+async function addCookies(uid, ip) {
+	var con;
+	try {
+		con = await pool.aGet();
+		// generate random string
+		// 可能有个小隐患就是随机字符串会碰撞，不过暂且不用管
+		var cookies = pool.randStr();
+		var cmd = 'call add_cookies('
+			 + con.escape(uid) + ', '
+			 + con.escape(ip) + ', '
+			 + con.escape(cookies) + ');'
+		await pool.aQuery(con, cmd);
+		return cookies;
+	} catch (err) {
+		console.error('[Error][MySQL] add cookies failed', uid, ip);
+		throw err;
+	} finally {
+		pool.release(con);
+	}
+}
+
 // 更新cookies最后使用时间
 // no return
 async function updateCookies(uid, cookies) {
@@ -47,6 +69,7 @@ async function checkCookies(uid, cookies) {
 }
 
 module.exports = {
+    add: addCookies,
     update: updateCookies,
     check: checkCookies,
     delete: deleteCookies,

@@ -6,6 +6,7 @@ const router = express.Router();
 // set middleware here
 // router.use(function(req,res,next) {next();});
 
+// get post list
 router.get('/', async (req, res) => {
     try {
         var data = await post.getListAndReplies(req.query.bid, req.query.page);
@@ -18,6 +19,7 @@ router.get('/', async (req, res) => {
     }
 });
 
+// save draft
 router.post('/draft', async (req, res) => {
     try {
         var newPid = await post.saveDraft(req.body.uid, req.body.pid, req.body.title, req.body.content)
@@ -50,6 +52,7 @@ router.post('/draft', async (req, res) => {
     }
 });
 
+// commit post
 router.post('/', async (req, res) => {
     try {
         await post.commitPost(req.body.uid, req.body.pid);
@@ -59,6 +62,7 @@ router.post('/', async (req, res) => {
     }
 })
 
+// get post details
 router.get('/:pid', async(req, res) => {
     try {
         var postData = await post.getPost(req.params.pid)
@@ -91,6 +95,11 @@ router.get('/reply-list/:pid', async(req, res) => {
     }
 })
 
+// delete draft
+
+
+
+// user delete post
 
 
 module.exports = router;

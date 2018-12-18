@@ -8,8 +8,7 @@ const mongoose = require('mongoose');
 
 const boardRouter = require('./router/board-router');
 const postRouter = require('./router/post-router');
-const loginRouter = require('./router/login-router');
-const registerRouter = require('./router/register-router');
+const userRouter = require('./router/user-router');
 // set up express server
 const app = express();
 app.use(morgan('combined'));
@@ -18,8 +17,7 @@ app.use(cors());
 
 // add routers here
 // app.use('/', PostRouter);
-app.use('/user', loginRouter);
-app.use('/user', registerRouter);
+app.use('/user', userRouter);
 app.use('/posts', postRouter);
 app.use('/boards', boardRouter);
 

@@ -10,6 +10,7 @@ async function addPostToBoard(pid, bid, changeBoard) {
 		await pool.aQuery(con, cmd);
 	} catch(err) {
 		console.error('[Error][MySQL] add post to board error', pid, bid);
+		throw err;
 	} finally {
 		pool.release(con);
 	}
@@ -27,6 +28,7 @@ async function addPostToReply(cPid, pPid, changeParent) {
 		return res[0]['@res'];
 	} catch(err) {
 		console.error('[Error][MySQL] add post to reply error', cmd);
+		throw err;
 	} finally {
 		pool.release(con);
 	}
