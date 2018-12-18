@@ -6,6 +6,7 @@ import AddPost from '@/components/AddPost.vue'
 import EditPost from '@/components/EditPost.vue'
 import Login from '@/components/Login.vue'
 import Register from '@/components/Register.vue'
+import Boards from '@/components/Boards.vue'
 
 Vue.use(Router)
 
@@ -29,7 +30,12 @@ export default new Router({
       component: Home
     },
     {
-      path: '/posts',
+      path: '/boards',
+      name: 'boards',
+      component: Boards
+    },
+    {
+      path: '/boards/posts',
       name: 'posts',
       component: Posts
     },
