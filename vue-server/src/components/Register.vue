@@ -3,26 +3,29 @@
         <h1>register</h1>
         <div>
             <div>
-                <input class="noimage" placeholder="Username" v-model="username">
-                <p class="error-alert" v-if="usernameError.seen" >{{ usernameError.errorLog }}</p>
+                <input class="noimage" placeholder="username" v-model="table.username">
+                <p v-if="table.username.length > 0 && usernameInvalid">{{ warning.username }}</p>
             </div>
             <div>
-                <input class="noimage" placeholder="password" v-model="password" type="password">
-                <p class="error-alert" v-if="passwordError.seen">{{ passwordError.errorLog }}</p>
+                <input class="noimage" placeholder="password" v-model="table.pass" type="password">
+                <p v-if="table.pass.length > 0 && passInvalid">{{ warning.pass }}</p>
             </div>
             <div>
-                <input class="noimage" placeholder="repeat password" v-model="repeatpass" type="password">
-                <p class="error-alert" v-if="repeatpassError.seen">{{ repeatpassError.errorLog }}</p>
+                <input class="noimage" placeholder="repeat password" v-model="table.repeatPass" type="password">
+                <p v-if="table.repeatPass.length > 0 && passNotMatch">{{ warning.repeatPass }}</p>
             </div>
             <div>
-                <input class="noimage" placeholder="nick name" v-model="nickname">
-                <p class="error-alert" v-if="nicknameError.seen">{{ nicknameError.errorLog }}</p>
+                <input class="noimage" placeholder="nickname" v-model="table.nickname">
+                <p v-if="table.nickname.length > 0 && nicknameInvalid">{{ warning.nickname }}</p>
             </div>
             <div>
-                <input class="noimage" placeholder="e-mail address" v-model="emailaddress">
-                <p class="error-alert" v-if="emailError.seen">{{ emailError.errorLog }}</p>
+                <input class="noimage" placeholder="email address" v-model="table.email">
+                <p v-if="table.email.length > 0 && emailInvalid">{{ warning.email }}</p>
             </div>
-            <button class="commit" @click="commitClick(username,password,repeatpass,nickname,emailaddress)">Commit</button>
+            <div>
+                <p v-if="loading">载入中... </p>
+            </div>
+            <button class="commit" @click="commitClick">Commit</button>
         </div>
     </div>
 </template>
@@ -33,90 +36,79 @@ export default {
     name: "register",
     data(){
         return{
-            username: '',
-            password: '',
-            repeatpass: '',
-            nickname: '',
-            emailaddress: '',
-            usernameError: {
-                errorLog: "null",
-                seen:false
+            table: {
+                username: '',
+                pass: '',
+                repeatPass: '',
+                nickname: '',
+                email: ''
             },
-            passwordError: {
-                errorLog: "null",
-                seen: false
+            word: {
+                username: '用户名',
+                pass: '密码',
+                repeatPass: '重复密码',
+                nickname: '昵称',
+                email: '邮箱'
             },
-            repeatpassError: {
-                errorLog: "null",
-                seen: false
+            warning: {
+                username: '用户名只能由大小写字母和数字组成。',
+                pass: '密码只能由大小写字母和数字和六个特殊字符(%$-_=&)组成，密码长度在6到20之间。',
+                repeatPass: '两组密码不相符。',
+                email: '请输入正确的邮箱。',
+                nickname: '昵称长度在3到20之间。'
             },
-            nicknameError: {
-                errorLog: "null",
-                seen: false
-            },
-            emailError: {
-                errorLog: "null",
-                seen: false
-            }
+            loading: false,
+        }
+    },
+    computed: {
+        usernameInvalid() {
+            return !(this.table.username.match(/^[a-zA-Z0-9]+$/));
+        },
+        passInvalid() {
+            return !(this.table.pass.match(/^[a-zA-Z0-9%-_=&$]{6,20}$/));
+        },
+        passNotMatch() {
+            return this.table.pass != this.table.repeatPass;
+        },
+        emailInvalid() {
+            return !(this.table.email.match(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/));
+        },
+        nicknameInvalid() {
+            return !(this.table.nickname.match(/^.{3,20}$/));
         }
     },
     methods: {
-        async commitClick(USERNAME,PASSWORD,REPEATPASS,NICKNAME,EMAILADDRESS) {
-            /*this.usernameError.seen = false;
-            this.passwordError.seen = false;
-            this.repeatpassError.seen = false;
-            this.nicknameError.seen = false;
-            this.emailaddress.seen = false;
-            alert(PASSWORD);
-            alert(REPEATPASS);
-            if(PASSWORD != REPEATPASS){
-                alert("SUCCESS");
-            }*/
-            if(USERNAME != '' && PASSWORD != '' && REPEATPASS != '' && NICKNAME != '' && EMAILADDRESS != ''){
-                if(PASSWORD != REPEATPASS){
-                    this.repeatpassError.errorLog = "*This has to be same as your password"
-                    this.repeatpassError.seen = true;
-                    this.usernameError.seen = false;
-                    this.passwordError.seen = false;
-                    this.nicknameError.seen = false;
-                    this.emailError.seen = false;
-                }else{
-                    this.repeatpassError.seen = false;
-                    const resonse = await UserService.userRegister(USERNAME,PASSWORD,NICKNAME,EMAILADDRESS);
-                    if(resonse.data.success){
-                        window.alert("register success!");
-                    }
+        async commitClick() {
+            if(this.loading) {
+                alert('正在通讯中，请勿重复提交。')
+                return;
+            }
+            var alertText = '';
+            for(var keyName in this.table) {
+                this.table[keyName] = this.table[keyName].trim();
+                if(!this.table[keyName]) {
+                    alertText += this.word[keyName] + '不能为空。\n';
                 }
-            }else{
-                if(USERNAME == ''){
-                    this.usernameError.errorLog = "*User name can't be null";
-                    this.usernameError.seen = true;
-                }else{
-                    this.usernameError.seen = false;
-                }
-                if(PASSWORD == ''){
-                    this.passwordError.errorLog = "*Password can't be null";
-                    this.passwordError.seen = true;
-                }else{
-                    this.passwordError.seen = false;
-                }
-                if(REPEATPASS == ''){
-                    this.repeatpassError.errorLog = "*Please repeat your password";
-                    this.repeatpassError.seen = true;
-                }else{
-                    this.repeatpassError.seen = false;
-                }
-                if(NICKNAME == ''){
-                    this.nicknameError.errorLog = "*Nick name can't be null";
-                    this.nicknameError.seen = true;
-                }else{
-                    this.nicknameError.seen = false;
-                }
-                if(EMAILADDRESS == ''){
-                    this.emailError.errorLog = "*E-mail address can't be null";
-                    this.emailError.seen = true;
-                }else{
-                    this.emailaddress.seen = false;
+            }
+            if(this.usernameInvalid || this.passNotMatch || this.passInvalid || this.emailInvalid || this.nicknameInvalid) {
+                alertText += '表格填写有错误，不能提交。\n';
+            }
+            if(alertText) {
+                alert(alertText);
+                return;
+            }
+            this.loading = true;
+            var res = await UserService.userRegister(this.table.username, this.table.pass, this.table.nickname, this.table.email);
+            this.loading = false;
+            if(res.data && res.data.success) {
+                alert('注册成功');
+                this.$store.dispatch('setUid', res.data.uid);
+                this.$store.dispatch('setUserCookies', res.data.cookies);
+            } else {
+                if(res.data.msg) {
+                    alert('注册失败\n' + res.data.msg);
+                } else {
+                    alert('注册失败');
                 }
             }
         }
@@ -127,7 +119,9 @@ export default {
 
 <style>
 #register {
+    font-family: monospace;
     text-align: center;
+    color:teal;
     margin-top: 100px;
 }
 .noimage{

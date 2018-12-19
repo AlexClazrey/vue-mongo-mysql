@@ -1,29 +1,34 @@
 const pool = require('./db');
 
 // no return 
-async function addPostToBoard(pid, bid) {
+async function addPostToBoard(pid, bid, changeBoard) {
 	var con;
 	try {
 		con = await pool.aGet();
-		await pool.aQuery(con, 'call add_post_to_board(' + con.escape(pid) + ', ' + con.escape(bid) + ');');
+		var cmd = changeBoard ? 'call change_post_to_board(' : 'call add_post_to_board(';
+		cmd += con.escape(pid) + ', ' + con.escape(bid) + ');';
+		await pool.aQuery(con, cmd);
 	} catch(err) {
 		console.error('[Error][MySQL] add post to board error', pid, bid);
+		throw err;
 	} finally {
 		pool.release(con);
 	}
 }
 
 // return 1 success or 0 failed
-async function addPostToReply(cPid, pPid) {
+async function addPostToReply(cPid, pPid, changeParent) {
 	var con;
 	try {
 		con = await pool.aGet();
-		var cmd = 'call add_post_to_reply(' + con.escape(cPid) + ', ' + con.escape(pPid) + ', @res);';
+		var cmd = changeParent ? 'call change_post_to_reply(' : 'call add_post_to_reply(';
+		cmd += con.escape(cPid) + ', ' + con.escape(pPid) + ', @res);';
 		await pool.aQuery(con, cmd);
 		var res = await pool.aQuery(con, 'select @res;');
 		return res[0]['@res'];
 	} catch(err) {
 		console.error('[Error][MySQL] add post to reply error', cmd);
+		throw err;
 	} finally {
 		pool.release(con);
 	}
@@ -40,13 +45,12 @@ async function saveDraft(uid, pid, title, content) {
 			 + con.escape(pid) + ', '
 			 + con.escape(title) + ', '
 			 + con.escape(content) + ', @pid);';
-		console.log(cmd);
 		await pool.aQuery(con, cmd);
 		var res = await pool.aQuery(con, 'select @pid;');
-		console.log(res);
 		return res[0]['@pid'];
 	} catch (err) {
 		console.error('[Error][MySQL] save post failed', cmd);
+		throw err;
 	} finally {
 		pool.release(con);
 	}
@@ -63,6 +67,7 @@ async function commitPost(uid, pid) {
 		await pool.aQuery(con, cmd);
 	} catch (err) {
 		console.error('[Error][MySQL] commit post failed', cmd);
+		throw err;
 	} finally {
 		pool.release(con);
 	}
@@ -76,18 +81,79 @@ async function getList(bid, page) {
 	var con;
 	try {
 		con = await pool.aGet();
-		var cmd = 'select * from v_ubp_list_preview';
+		var cmd = 'select * from v_ubp_list';
 		if(bid) {
 			cmd += ' where bid=' + con.escape(bid);
 		}
 		page = page > 0 ? page : 1;
 		cmd += ' limit ' + con.escape((page - 1) * pageSize) + ', ' + con.escape(pageSize) + ';';
-		// debug
-		console.log(cmd);
 		var res = await pool.aQuery(con, cmd);
 		return res;
 	} catch (err) {
 		console.error('[Error][MySQL] get list failed', cmd);
+		throw err;
+	} finally {
+		pool.release(con);
+	}
+}
+
+// 在foreach里面不能用async她不会等你，这个操作要用Promise.all来实现
+async function getListAndReplies(bid, page) {
+	var postList = await getList(bid, page);
+	var replyPromises = postList.map(post => {
+		return getReplies(post.pid, 5);
+	});
+	var values = await Promise.all(replyPromises);
+	values.forEach((replies, index) => {
+		postList[index].replies = replies;
+	});
+	return postList;
+}
+
+async function getPost(pid) {
+	var con;
+	try {
+		con = await pool.aGet();
+		var cmd = 'select * from v_post_content where pid =' + con.escape(pid) + ';';
+		var res = await pool.aQuery(con, cmd);
+		return res;
+	} catch (err) {
+		console.error('[Error][MySQL] get post detail failed', cmd);
+		throw err;
+	} finally {
+		pool.release(con);
+	}
+}
+
+async function getReplies(pid, count) {
+	var con;
+	try {
+		con = await pool.aGet();
+		var cmd = 'select * from v_post_reply_list where p_pid = '
+			+ con.escape(pid)
+			+ ' limit ' + con.escape(count) + '; ';
+		var res = await pool.aQuery(con, cmd);
+		return res;
+	} catch (err) {
+		console.error('[Error][MySQL] get replies list failed', cmd);
+		throw err;
+	} finally {
+		pool.release(con);
+	}
+}
+
+// returns bid
+async function getPostBoard(pid) {
+	var con;
+	try {
+		con = await pool.aGet();
+		var cmd = 'call get_post_board(' + con.escape(pid) + ', @res);';
+		await pool.aQuery(con, cmd);
+		var res = await pool.aQuery(con, 'select @res;');
+		return res[0]['@res'];
+	} catch (err) {
+		console.error('[Error][MySQL] get post board failed', cmd);
+		throw err;
 	} finally {
 		pool.release(con);
 	}
@@ -98,5 +164,9 @@ module.exports = {
 	addPostToReply,
 	saveDraft,
 	commitPost,
-	getList
+	getList,
+	getListAndReplies,
+	getPost,
+	getReplies,
+	getPostBoard,
 };

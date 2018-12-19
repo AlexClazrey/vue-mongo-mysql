@@ -6,9 +6,9 @@ cp /dev/null express.log
 cp /dev/null vue.log
 echo "--- Starting express-server and vue-server with output to run.log ---"
 cd "$POS"/express-server
-npm start >> ../express.log &
+npm start &>> ../express.log &
 cd "$POS"/vue-server
-npm run serve >> ../vue.log &
+npm run serve &>> ../vue.log &
 cd "$POS"
 echo "--- Start watching run.log ---"
 tail -f express.log vue.log

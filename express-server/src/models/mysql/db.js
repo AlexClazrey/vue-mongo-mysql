@@ -42,7 +42,7 @@ function releaseConnection(connection) {
 		con = await aGetConnectionWithLog();
 		// do your work...
 	} catch (err) {
-		console.log(err);
+		console.error(err);
 	} finally {
 		releaseConnectionWithLog(con);
 	}
@@ -69,11 +69,12 @@ async function aQueryWithLog(connection, ...queryArgs) {
 		console.error("[Error][MySQL] query via an undefined connection");
 		throw new Error("[MySQL] query via an undefined connection");
 	}
+	console.log('[Info][Query]', ...queryArgs);
 	try {
-		const result = util.promisify(connection.query.bind(connection))(...queryArgs);
+		const result = await util.promisify(connection.query.bind(connection))(...queryArgs);
 		return result;
 	} catch (err) {
-		console.error("[Error][MySQL] query failed.", queryArgs);
+		console.error("[Error][MySQL] query failed. QueryArgs: \n", queryArgs);
 		throw err;
 	}
 }

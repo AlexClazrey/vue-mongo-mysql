@@ -21,13 +21,20 @@
 		name: 'NewPost',
 		props: {
 			heading: String,
-			post: { title: String, description: String },
+			post: { title: String, content: String , isReply: Boolean, bid: Number},
 			buttonText: String,
 			loading: Boolean
 		},
 		methods: {
 			emitPost: function() {
-				this.$emit('emit', this.post);
+				var UID = {
+					uid: this.$store.state.user.uid
+				};
+				var data = {};
+				Object.assign(data,UID,this.post);
+				console.log(this.post);
+				console.log(data);
+				this.$emit('emit', data);
 			}
 		}
 	}

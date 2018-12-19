@@ -1,4 +1,6 @@
 const pool = require('./db');
+const cook = require('./cookies');
+const group = require('./group');
 
 // 记得要及时释放连接
 
@@ -37,7 +39,10 @@ async function userRegister(username,nickname,password,email) {
 		await pool.aQuery(con, cmd);
 		res = await pool.aQuery(con, 'select @uid;');
 		if(res.length > 0 && res[0]['@uid'] > 0) {
-			return res[0]['@uid']; // Register success
+			var uid = res[0]['@uid'];
+			// add user to default user group
+			await group.addUserToGroup(uid, 1, null);
+			return uid; // Register success
 		} else {
 			return null; // Register failed
 		}
@@ -49,36 +54,18 @@ async function userRegister(username,nickname,password,email) {
 	}
 }
 
-//return userinfo
+//return user info or null;
 async function getUserInfo(uid) {
 	var con;
 	try {
 		con = await pool.aGet();
-		await pool.aQuery(con, 'select username,nickname,email,portrait from user where id='+con.escape(uid));
+		var res = await pool.aQuery(con, 'select id as uid, username, nickname, email, portrait from `user` where id=' + con.escape(uid));
+		if(res.length > 0)
+			return res[0];
+		else
+			return null;
 	} catch (err) {
 		console.error('[Error][MySQL] getuserinfo failed.', uid);
-		throw err;
-	} finally {
-		pool.release(con);
-	}
-}
-
-// return cookies;
-async function addCookies(uid, ip) {
-	var con;
-	try {
-		con = await pool.aGet();
-		// generate random string
-		// 可能有个小隐患就是随机字符串会碰撞，不过暂且不用管
-		var cookies = pool.randStr();
-		var cmd = 'call add_cookies('
-			 + con.escape(uid) + ', '
-			 + con.escape(ip) + ', '
-			 + con.escape(cookies) + ');'
-		await pool.aQuery(con, cmd);
-		return cookies;
-	} catch (err) {
-		console.error('[Error][MySQL] add cookies failed', uid, ip);
 		throw err;
 	} finally {
 		pool.release(con);
@@ -90,7 +77,7 @@ async function loginAndCookies(username, password, ip) {
 	var uid = await userLogin(username, password);
 	// check if failed uid will be null
 	if(uid) {
-		var cookies = await addCookies(uid, ip);
+		var cookies = await cook.add(uid, ip);
 		return {
 			uid,
 			cookies
@@ -104,7 +91,7 @@ async function registerAndCookies(username, nickname, password, email, ip) {
 	var uid = await userRegister(username,nickname,password,email);
 	// check if failed uid will be null
 	if(uid) {
-		var cookies = await addCookies(uid, ip);
+		var cookies = await cook.add(uid, ip);
 		return {
 			uid,
 			cookies
@@ -114,11 +101,30 @@ async function registerAndCookies(username, nickname, password, email, ip) {
 	}
 }
 
+// return uid or null;
+async function getUidFromUsername(username) {
+	var con;
+	try {
+		con = await pool.aGet();
+		var cmd = 'select id as uid from `user` where username=' + con.escape(username) + ';';
+		var res = await pool.aQuery(con, cmd);
+		if(res.length > 0)
+			return res[0].uid;
+		else
+			return null;
+	} catch (err) {
+		console.error('[Error][MySQL] get uid from username failed', cmd);
+		throw err;
+	} finally {
+		pool.release(con);
+	}
+}
+
 module.exports = {
 	userLogin,
-	addCookies,
 	loginAndCookies,
 	getUserInfo,
-	userregister: userRegister,
+	userRegister,
 	registerAndCookies,
+	getUidFromUsername,
 }
