@@ -8,7 +8,7 @@ async function boardList() {
         var res = await pool.aQuery(con, cmd);
         return res;
     } catch(err) {
-        console.log('[Error][MySQL] list board error');
+        console.error('[Error][MySQL] list board error');
         throw err;
     } finally {
         pool.release(con);
