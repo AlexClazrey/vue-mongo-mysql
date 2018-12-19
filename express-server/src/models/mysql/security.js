@@ -28,6 +28,13 @@ async function checkPrivilege(uid, bid, priName) {
 // return null for ok, others merge this into json-response
 async function checkPrivilegeAndCookie(cookies, uid, bid, priName) {
     // cookies can be a string or {user: <str>}
+    if(typeof cookies === 'object' && !cookies.user) {
+        console.warn('[Warn][Req] got an empty cookie:', cookies);
+        return {
+            badAuth: true
+        }
+    }
+    console.log(arguments);
     if(cookies.user) 
         cookies = cookies.user;
     // check cookies first
@@ -57,6 +64,14 @@ async function checkPrivilegeAndCookie(cookies, uid, bid, priName) {
 // return true for hasProblem, return false for ok.
 async function autoCheck(req, res, priName) {
     var uid = req.body.uid, bid;
+    // if uid-s conflict
+    if(req.cookies.uid != req.body.uid) {
+        res.send({
+            success: false,
+            badAuth: true,
+        });
+        return;
+    }
     if(req.body.pPid) {
         bid = await post.getPostBoard(req.body.pPid);
     } else {

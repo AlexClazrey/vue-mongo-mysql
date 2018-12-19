@@ -23,6 +23,7 @@ router.get('/', async (req, res) => {
 // save draft
 router.post('/draft', async (req, res) => {
     try {
+        // TODO split commit and reply privileges
         // if has problem, return value will be true
         if(await sec.autoCheck(req, res, 'commit post'))
             return;

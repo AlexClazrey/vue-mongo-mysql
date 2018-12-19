@@ -74,7 +74,7 @@ async function aQueryWithLog(connection, ...queryArgs) {
 		const result = await util.promisify(connection.query.bind(connection))(...queryArgs);
 		return result;
 	} catch (err) {
-		console.error("[Error][MySQL] query failed. QueryArgs: \n", queryArgs);
+		console.error("[Error][MySQL] query failed. QueryArgs:", queryArgs);
 		throw err;
 	}
 }

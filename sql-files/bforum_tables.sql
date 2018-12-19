@@ -1525,6 +1525,8 @@ call add_privilege_to_group(@pri_id, @gid, 1);
 call add_privilege_to_group(@pri_id2, @gid, 1);
 
 -- set up admin group
+call add_privilege_to_group(@pri_id, @gid2, 1);
+call add_privilege_to_group(@pri_id2, @gid2, 1);
 call add_privilege_to_group(@pri_id3, @gid2, 1);
 
 -- set up no commit user group
@@ -1533,5 +1535,11 @@ call add_privilege_to_group(@pri_id, @gid3, 0);
 -- set up no commit no reply user group
 call add_privilege_to_group(@pri_id, @gid4, 0);
 call add_privilege_to_group(@pri_id2, @gid4, 0);
+
+-- set up admin user
+call user_register('useradmin', 'Admin 001', '654321', '1111122222233333', 'admin@webforum.com', @adminId);
+call add_user_to_group(@adminId, @gid2, NULL);
+call add_user_to_group(@adminId, @gid, NULL);
+
 
 -- end attached script 'init_data'
