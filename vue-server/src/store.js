@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import userApi from './services/user'
+import boardApi from './services/boards'
 import $ from 'jquery';
 require('jquery.cookie');
 
@@ -39,6 +40,12 @@ export default new Vuex.Store({
     removeUserCookies: () => {
       $.removeCookie('uid');
       $.removeCookie('user');
+    },
+    setBoards: async (context)=>{
+      var BOARD = await boardApi.getBoards();
+      if(BOARD.data && BOARD.data.success){
+        context.commit('setBoards', BOARD.data.data)
+      }
     }
   }
 })

@@ -18,18 +18,12 @@ export default {
     name: 'boards',
     data() {
         return {
-            boards:[]
         }
     },
-    beforeCreate: async function() {
-        //this.$store.mutations.setBoards(param,"success");
-        const resonse = await BoardService.getBoards();
-        if(resonse.data.success){
-            this.$store.commit('setBoards',resonse.data.data);
+    computed:{
+        boards() {
+            return this.$store.state.boards;
         }
-    },
-    created: function(){
-        this.boards = this.$store.state.boards;
     },
     methods: {
         async test(){

@@ -4,7 +4,7 @@
 		<div>
 			<p v-if="!hasPost">There are no posts.. Lets add one now.</p>
 			<div class="add-post-wrapper">
-				<router-link :to="{ name: 'newPost' }" :class="{add_post_link: !hasPost}">
+				<router-link :to="{ name: 'newPost' , params:{ id : board_id }}" :class="{add_post_link: !hasPost}">
 					Add Post
 				</router-link>
 			</div>
@@ -14,17 +14,19 @@
 				<thead>
 					<tr>
 						<th>Title</th>
-						<th width="550">Description</th>
+						<th width="450">Description</th>
+						<th width="100">LastReplyTime</th>
 						<th width="100" class="post-action-cell">Action</th>
 					</tr>
 				</thead>
 				<tbody>
-					<tr v-for="post in posts" :key="post._id || post.id">
+					<tr v-for="post in posts" :key="post.pid">
 						<td>{{ post.title }}</td>
-						<td>{{ post.description }}</td>
+						<td>{{ post.content }}</td>
+						<td>{{ post.last_reply_time }}</td>
 						<td class="post-action-cell">
-							<router-link :to="{name:'editPost', params:{id: post._id || post.id}}">Edit</router-link>
-							| <a href="#" @click="deletePost(post._id || post.id, post.title)">Delete</a>
+							<router-link :to="{name:'editPost', params:{id: post.pid}}">Edit</router-link>
+							| <a href="#" @click="deletePost( post.pid, post.title)">Delete</a>
 						</td>
 					</tr>
 				</tbody>
@@ -35,7 +37,6 @@
 
 <script>
 import PostsService from '@/services/posts';
-import Boards from './Boards.vue';
 export default {
 	name: 'posts',
 	data() {
@@ -53,6 +54,7 @@ export default {
 	mounted() {
 		this.board_id = this.$route.params.id;
 		this.getPosts(this.board_id);
+		console.log(this.board_id);
 	},
 	methods: {
 		async getPosts(params) {
@@ -62,7 +64,7 @@ export default {
 			console.log(response);
 			this.loading = false;
 			if(response.data.success) {
-				this.posts = response.data.posts;
+				this.posts = response.data.data;
 			} else {
 				window.alert("Fetch posts list failed.");
 			}

@@ -1,5 +1,5 @@
 <template>
-	<PostEditor heading="Add Post" :post="{title: '', description: ''}" buttonText="Add" :loading="false" @emit="addPost">
+	<PostEditor heading="Add Post" :post="{title: '', content: '', isReply: false, bid: board_id}" buttonText="Add" :loading="false" @emit="addPost">
 	</PostEditor>
 </template>
 
@@ -8,8 +8,16 @@
 	import PostEditor from './PostEditor.vue';
 	export default {
 		name: 'NewPost',
+		data(){
+			return {
+				board_id: null
+			}
+		},
 		components: {
 			'PostEditor': PostEditor
+		},
+		created() {
+			this.board_id = this.$route.params.id;
 		},
 		methods: {
 			async addPost(data) {
