@@ -26,11 +26,13 @@ router.post('/register', (request, response) => {
     // I found it on stackoverflow
     var ip = request.headers['x-forwarded-for'] || request.connection.remoteAddress;
     user.registerAndCookies(request.body.username, request.body.nickname, request.body.pass, request.body.email, ip).then(data => {
-        if(data) {
+        // if fails, data.msg will contain error message.
+        if(!data.msg) {
             data.success = true;
             response.send(data);
         } else {
-            response.send({ success: false });
+            data.success = false;
+            response.send(data);
         }
     }).catch(err => {
         response.send({ success: false });

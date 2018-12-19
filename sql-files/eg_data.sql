@@ -3,17 +3,19 @@ use bforum;
 drop table if exists _test;
 create temporary table _test ( id int not null primary key auto_increment, res varchar(30) not null, title varchar(30));
 
+-- set @debug = 1;
+
 call add_board('Board 1', @bid);
 call add_board('Board 2', @bid2);
 
-call add_group('Group normal user', 10, @gid);
-call add_group('Group block user', 50, @gid2);
-call add_privilege('commit post', @pri_id);
-call add_privilege_to_group(@pri_id, @gid, 1);
-call add_privilege_to_group(@pri_id, @gid2, 0);
-
 call user_register('cat', 'A CAT', '123456', 'ddddeee', 'cat@cat.com', @uid);
 call user_register('dog', 'A DOG', '123456', 'ddddeee', 'dog@dog.com', @uid2);
+call user_register('cat', 'A CAT', '123456', 'ddddeee', 'cat@cat.com', @uid3);
+insert into _test(res) values (if(@uid3 = -1, 'pass', 'fail'));
+call user_register('ct', 'A CA', '1256', 'ddeee', 'cat@cat.com', @uid3);
+insert into _test(res) values (if(@uid3 = -1, 'pass', 'fail'));
+call user_register('cat', 'A CAT', '123456', 'ddddeee', 'c@cat.com', @uid3);
+insert into _test(res) values (if(@uid3 = -1, 'pass', 'fail'));
 
 call check_privilege(@uid2, @bid, 'commit post', @res);
 insert into _test(res) values (if(@res is null, 'pass', 'fail'));
@@ -116,6 +118,8 @@ call save_draft(@uid, @pid7, 'new draft 3 c ', 'new draft content 3 c ', @pid7);
 call commit_post(@uid, @pid7);
 select max(pid) from v_ubp_list into @res;
 insert into _test(res) values (if(@res = 6, 'pass', 'fail'));
+
+set @debug = 0;
 
 select * from _test;
 

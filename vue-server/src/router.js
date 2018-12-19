@@ -7,6 +7,7 @@ import EditPost from '@/components/EditPost.vue'
 import Login from '@/components/Login.vue'
 import Register from '@/components/Register.vue'
 import Boards from '@/components/Boards.vue'
+import AdminPanel from '@/components/AdminPanel.vue'
 
 Vue.use(Router)
 
@@ -48,6 +49,11 @@ export default new Router({
       path: '/posts/new',
       name: 'newPost',
       component: AddPost
+    },
+    {
+      path: '/admin-panel',
+      name: 'admin panel',
+      component: AdminPanel
     },
     {
       path: '/about',

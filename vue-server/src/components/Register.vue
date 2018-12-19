@@ -32,6 +32,7 @@
 
 <script>
 import UserService from '../services/user';
+// TODO check username and email availability before a commit.
 export default {
     name: "register",
     data(){

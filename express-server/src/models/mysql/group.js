@@ -195,7 +195,6 @@ async function addPrivilegeToGroup(pri_id, gid, permit) {
 }
 
 // no return
-// TODO TODO change arguments order in SQL definition
 // TODO remove item should return a deleted line number;
 async function removePrivilegeFromGroup(pri_id, gid) {
     var con;

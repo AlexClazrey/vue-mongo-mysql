@@ -25,6 +25,7 @@ async function userLogin(username,password) {
 	}
 }
 
+// return uid or null or { msg: <error-msg> }
 async function userRegister(username,nickname,password,email) {
 	var con;
 	try {
@@ -38,13 +39,23 @@ async function userRegister(username,nickname,password,email) {
 			+ con.escape(email)+', @uid);';
 		await pool.aQuery(con, cmd);
 		res = await pool.aQuery(con, 'select @uid;');
-		if(res.length > 0 && res[0]['@uid'] > 0) {
+		if(res.length > 0) {
 			var uid = res[0]['@uid'];
-			// add user to default user group
-			await group.addUserToGroup(uid, 1, null);
-			return uid; // Register success
+			if(uid > 0) {
+				// add user to default user group
+				await group.addUserToGroup(uid, 1, null);
+				return uid; // Register success
+			} else {
+				// sql call returns -1 for duplications
+				if(uid == -1) {
+					return {
+						msg: 'username or email has been used.'
+					}
+				}
+				return null; // other failures
+			}
 		} else {
-			return null; // Register failed
+			return null; // other failures
 		}
 	} catch (err) {
 		console.error('[Error][MySQL] register failed.', cmd);
@@ -89,15 +100,15 @@ async function loginAndCookies(username, password, ip) {
 
 async function registerAndCookies(username, nickname, password, email, ip) {
 	var uid = await userRegister(username,nickname,password,email);
-	// check if failed uid will be null
-	if(uid) {
+	// check if succeeded uid is a number
+	if(typeof uid === 'number') {
 		var cookies = await cook.add(uid, ip);
 		return {
 			uid,
 			cookies
 		};
 	} else {
-		return null;
+		return uid;
 	}
 }
 
