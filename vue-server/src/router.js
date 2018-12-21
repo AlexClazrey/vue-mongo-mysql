@@ -7,7 +7,7 @@ import EditPost from '@/components/EditPost.vue'
 import Login from '@/components/Login.vue'
 import Register from '@/components/Register.vue'
 import Boards from '@/components/Boards.vue'
-import AdminPanel from '@/components/AdminPanel.vue'
+import AdminPanel from '@/components/admin-panel/AdminPanel.vue'
 
 Vue.use(Router)
 

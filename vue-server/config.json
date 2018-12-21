@@ -1,8 +1,11 @@
 {
 	"webServer": {
-		"address": "localhost"
+		"host": "127.0.0.1",
+		"port": 8020
 	},
 	"apiServer": {
-		"address": "http://localhost:8081/"
+		"comment": "Prefix must start with a '/'. It's used by reverse proxy.",
+		"protocol": "http://",
+		"prefix": "/api"
 	}
 }

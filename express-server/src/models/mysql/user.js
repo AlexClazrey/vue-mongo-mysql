@@ -70,13 +70,27 @@ async function getUserInfo(uid) {
 	var con;
 	try {
 		con = await pool.aGet();
-		var res = await pool.aQuery(con, 'select id as uid, username, nickname, email, portrait from `user` where id=' + con.escape(uid));
+		var res = await pool.aQuery(con, 'select id, username, nickname, email, portrait from `user` where id=' + con.escape(uid));
 		if(res.length > 0)
 			return res[0];
 		else
 			return null;
 	} catch (err) {
 		console.error('[Error][MySQL] getuserinfo failed.', uid);
+		throw err;
+	} finally {
+		pool.release(con);
+	}
+}
+
+async function getUserList() {
+	var con;
+	try {
+		con = await pool.aGet();
+		var res = await pool.aQuery(con, 'select id, username, nickname, email from `user`;');
+		return res;
+	} catch (err) {
+		console.error('[Error][MySQL] get user list failed.');
 		throw err;
 	} finally {
 		pool.release(con);
@@ -138,4 +152,5 @@ module.exports = {
 	userRegister,
 	registerAndCookies,
 	getUidFromUsername,
+	getUserList,
 }

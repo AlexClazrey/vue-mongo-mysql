@@ -805,6 +805,28 @@ END$$
 DELIMITER ;
 
 -- -----------------------------------------------------
+-- procedure edit_post
+-- -----------------------------------------------------
+
+DELIMITER $$
+USE `bforum`$$
+CREATE PROCEDURE `edit_post` (in _pid int, in _title varchar(200), in _content text)
+BEGIN
+    declare exit handler for sqlexception
+    begin
+		rollback;
+        resignal;
+	end;
+    
+    start transaction;
+	insert into `post_content`(`post_id`, `title`, `content`) values(_pid, _title, _content);
+    update `post` set `post_content_id` = last_insert_id() where `id` = _pid;
+    commit;
+END$$
+
+DELIMITER ;
+
+-- -----------------------------------------------------
 -- procedure get_post_board
 -- -----------------------------------------------------
 
@@ -963,11 +985,19 @@ USE `bforum`$$
 CREATE PROCEDURE `update_cookies` (in _uid int, in _val varchar(45), out _success int)
 BEGIN
 	declare _checked int;
+    declare exit handler for sqlexception
+    begin
+		rollback;
+        resignal;
+	end;
+    
+    start transaction;
 	call check_cookies(_uid, _val, _checked);
     if _checked then
 		update `cookies` set `last_used_time` = current_timestamp where `cookies`.`user_id` = _uid and `cookies`.`val` = _val;
     end if;
     set _success = _checked;
+    commit;
 END$$
 
 DELIMITER ;
@@ -1508,8 +1538,8 @@ call add_privilege_to_group(@pri_id2, @gid4, 0);
 
 -- set up admin user
 call user_register('useradmin', 'Admin 001', '654321', '1111122222233333', 'admin@webforum.com', @adminId);
-call add_user_to_group(@adminId, @gid, NULL);
 call add_user_to_group(@adminId, @gid2, NULL);
+call add_user_to_group(@adminId, @gid, NULL);
 
 
 -- end attached script 'init_data'

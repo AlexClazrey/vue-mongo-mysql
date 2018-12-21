@@ -54,11 +54,13 @@ async function removeGroup(gid) {
     }
 }
 
-async function listUserToGroup() {
+async function listUserToGroup(includeNormalUserGroup) {
     var con;
     try {
         con = await pool.aGet();
-        var cmd = 'select `user_id` as uid, `group_id` as gid, `board_id` as bid from user_to_group;';
+        var cmd = 'select `id`, `user_id` as uid, `group_id` as gid, `board_id` as bid from user_to_group';
+        if(!includeNormalUserGroup)
+            cmd += ' where group_id <> 1';
         var res = await pool.aQuery(con, cmd);
         return res;
     } catch(err) {

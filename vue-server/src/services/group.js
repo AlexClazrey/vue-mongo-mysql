@@ -12,5 +12,8 @@ export default {
     },
     listGroupToPrivileges() {
         return api().get('/group/group-to-privileges');
+    },
+    listUser() {
+        return api().get('/group/user-list');
     }
 };

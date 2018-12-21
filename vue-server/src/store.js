@@ -34,19 +34,21 @@ export default new Vuex.Store({
   state: {
     user: null,
     boards: [],
-    groups: [],
-    privileges: [],
-    userToGroup: [],
-    groupToPrivileges: [],
+    adminPanel: {
+      requests: 5,
+      loaded: 0,
+      groups: [],
+      privileges: [],
+      userToGroup: [],
+      groupToPrivileges: [],
+      users: [],
+    },
   },
   getters: {
-    uid: (state) => {
-      return state.user ? state.user.uid : null;
-    },
+    uid: state => state.user ? state.user.id : null,
     user: state => state.user,
     boards: state => state.boards,
-    groups: state => state.groups,
-    privileges: state => state.privileges,
+    adminPanel: state => state.adminPanel,
   },
   mutations: {
     setUserInfo(state, userInfo) {
@@ -56,16 +58,19 @@ export default new Vuex.Store({
       state.boards = payload;
     },
     setGroups(state, groups) {
-      state.groups = groups;
+      state.adminPanel.groups = groups;
+    },
+    setUsers(state, users) {
+      state.adminPanel.users = users;
     },
     setPrivileges(state,privileges) {
-      state.privileges = privileges;
+      state.adminPanel.privileges = privileges;
     },
     setUserToGroup(state, data) {
-      state.userToGroup = data;
+      state.adminPanel.userToGroup = data;
     },
     setGroupToPrivileges(state, data) {
-      state.groupToPrivileges = data;
+      state.adminPanel.groupToPrivileges = data;
     },
   },
   actions: {
@@ -82,30 +87,36 @@ export default new Vuex.Store({
       $.removeCookie('user');
     },
     setBoards: async (context)=>{
-      var BOARD = await boardApi.getBoards();
-      if(BOARD.data && BOARD.data.success){
-        context.commit('setBoards', BOARD.data.data)
-      }
+      await simpleApiCall(context, 'setBoards', '获取板块列表出错。', boardApi.getBoards);
+    },
+    refreshUsers: async(context) => {
+      await simpleApiCall(context, 'setUsers', '获取用户列表出错。', groupApi.listUser);
+      context.state.adminPanel.loaded++;
     },
     refreshGroups: async(context) => {
       await simpleApiCall(context, 'setGroups', '获取用户组列表出错。', groupApi.listGroup);
+      context.state.adminPanel.loaded++;
     },
     refreshPrivileges: async(context) => {
       await simpleApiCall(context, 'setPrivileges', '获取权限列表出错。', groupApi.listPrivileges);
+      context.state.adminPanel.loaded++;
     },
     refreshUserToGroup: async(context) => {
       await simpleApiCall(context, 'setUserToGroup', '获取用户-用户组映射出错。', groupApi.listUserToGroup);
+      context.state.adminPanel.loaded++;
     },
     refreshGroupToPrivileges: async(context) => {
       await simpleApiCall(context, 'setGroupToPrivileges', '获取用户组-权限映射出错。', groupApi.listGroupToPrivileges);
+      context.state.adminPanel.loaded++;
     },
     refreshAdminPanel: (context) => {
-      context.dispatch('refreshGroups');
       context.dispatch('setBoards');
+      context.state.adminPanel.loaded = 0;
+      context.dispatch('refreshUsers');
+      context.dispatch('refreshGroups');
       context.dispatch('refreshPrivileges');
       context.dispatch('refreshUserToGroup');
       context.dispatch('refreshGroupToPrivileges');
-      // TODO and more...
     },
   }
 })

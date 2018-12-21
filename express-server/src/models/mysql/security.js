@@ -1,9 +1,14 @@
 const pool = require('./db');
 const cook = require('./cookies');
 const post = require('./post');
+const conf = require('../../readConfig');
 
 // returns 1(permit) or 0(forbidden) or null(not set)
 async function checkPrivilege(uid, bid, priName) {
+    // check if enabled  
+    if(conf.security.privilege === false) {
+        return 1;
+    }
     var con;
     try {
         con = await pool.aGet();
@@ -23,6 +28,11 @@ async function checkPrivilege(uid, bid, priName) {
     }
 }
 
+async function updateCookiesWrap(uid, cookies) {
+    // check if enabled
+    return conf.security.cookies ? await cook.update(uid, cookies) : 1;
+}
+
 // cookies can be a string or { user: <string> }
 // priName and bid can be null for check uid-cookies pair only
 // return null for ok, others merge this into json-response
@@ -34,11 +44,10 @@ async function checkPrivilegeAndCookie(cookies, uid, bid, priName) {
             badAuth: true
         }
     }
-    console.log(arguments);
     if(cookies.user) 
         cookies = cookies.user;
     // check cookies first
-    var checkRes = await cook.update(uid, cookies);
+    var checkRes = await updateCookiesWrap(uid, cookies);
     if(checkRes) {
         // check if check only cookies
         if(priName && bid) {
@@ -88,7 +97,7 @@ async function autoCheck(req, res, priName) {
 
 function updateCookiesMiddleware(req, res, next) {
     if(req.cookies && req.cookies.user && req.cookies.uid) {
-        cook.update(req.cookies.uid, req.cookies.user).then(data => {
+        updateCookiesWrap(req.cookies.uid, req.cookies.user).then(data => {
             if(data)
                 console.log('[OK][Mid] Auto update cookies success.');
             else

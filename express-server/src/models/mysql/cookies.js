@@ -15,7 +15,7 @@ async function addCookies(uid, ip) {
 		await pool.aQuery(con, cmd);
 		return cookies;
 	} catch (err) {
-		console.error('[Error][MySQL] add cookies failed', uid, ip);
+		console.error('[Error][MySQL] add cookies failed');
 		throw err;
 	} finally {
 		pool.release(con);
@@ -32,7 +32,7 @@ async function updateCookies(uid, cookies) {
         var res = await pool.aQuery(con, 'select @res;');
         return res[0]['@res'];
     } catch(err) {
-        console.error('[Error][MySQL] update cookies failed', uid, cookies);
+        console.error('[Error][MySQL] update cookies failed', err);
     } finally {
         pool.release(con);
     }
@@ -46,7 +46,7 @@ async function deleteCookies(cookies) {
         con = await pool.aGet();
         await pool.aQuery(con, 'call delete_cookies(' + con.escape(cookies) + ');');
     } catch (err) {
-        console.error('[Error][MySQL] delete cookies failed', cookies);
+        console.error('[Error][MySQL] delete cookies failed');
     } finally {
         pool.release(con);
     }
@@ -63,7 +63,7 @@ async function checkCookies(uid, cookies) {
         var res = await pool.aQuery(con, 'select @res;');
         return res[0]['@res'];
     } catch (err) {
-        console.error('[Error][MySQL] check cookies failed', uid, cookies);
+        console.error('[Error][MySQL] check cookies failed');
     } finally {
         pool.release(con);
     }

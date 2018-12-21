@@ -1,5 +1,6 @@
 const sec = require('../models/mysql/security');
 
+// leave priName and bid to be empty to skip privilege check
 async function simpleModelCall(req, res, modelAsyncFunction, bid, priName) {
     try {
         // secure process

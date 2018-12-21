@@ -15,5 +15,9 @@
 		"db": "bforum",
 		"maxConnection": 100,
 		"debugPool": false
+	},
+	"security": {
+		"cookies": true,
+		"privilege": true
 	}
 }
