@@ -58,19 +58,19 @@ export default new Vuex.Store({
       state.boards = payload;
     },
     setGroups(state, groups) {
-      state.adminPanel.groups = groups;
+      state.adminPanel.groups = groups.sort((a,b) => (a.id - b.id));
     },
     setUsers(state, users) {
       state.adminPanel.users = users;
     },
     setPrivileges(state,privileges) {
-      state.adminPanel.privileges = privileges;
+      state.adminPanel.privileges = privileges.sort((a,b) => (a.id - b.id));
     },
     setUserToGroup(state, data) {
-      state.adminPanel.userToGroup = data;
+      state.adminPanel.userToGroup = data.sort((a,b) => (a.id - b.id));
     },
     setGroupToPrivileges(state, data) {
-      state.adminPanel.groupToPrivileges = data;
+      state.adminPanel.groupToPrivileges = data.sort((a,b) => (a.gid - b.gid));
     },
   },
   actions: {
@@ -86,7 +86,7 @@ export default new Vuex.Store({
       $.removeCookie('uid');
       $.removeCookie('user');
     },
-    setBoards: async (context)=>{
+    refreshBoards: async (context)=>{
       await simpleApiCall(context, 'setBoards', '获取板块列表出错。', boardApi.getBoards);
     },
     refreshUsers: async(context) => {
@@ -110,7 +110,7 @@ export default new Vuex.Store({
       context.state.adminPanel.loaded++;
     },
     refreshAdminPanel: (context) => {
-      context.dispatch('setBoards');
+      context.dispatch('refreshBoards');
       context.state.adminPanel.loaded = 0;
       context.dispatch('refreshUsers');
       context.dispatch('refreshGroups');

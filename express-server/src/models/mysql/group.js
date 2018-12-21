@@ -41,6 +41,9 @@ async function addGroup(name, priority) {
 
 // no return
 async function removeGroup(gid) {
+    if(gid <= 2) {
+        throw Error('You can delete this group. gid:', gid);
+    }
     var con;
     try {
         con = await pool.aGet();
@@ -90,14 +93,11 @@ async function addUserToGroup(uid, gid, bid) {
 }
 
 // no return
-async function removeUserFromGroup(uid, gid, bid) {
+async function removeUserFromGroup(id) {
     var con;
     try {
         con = await pool.aGet();
-        var cmd = 'call delete_user_from_group('
-            + con.escape(uid) + ', '
-            + con.escape(gid) + ', '
-            + con.escape(bid) + ');'
+        var cmd = 'call delete_user_from_group(' + con.escape(id) + ');'
         await pool.aQuery(con, cmd);
     } catch (err) {
         console.error('[Error][MySQL] delete user from group failed', cmd);

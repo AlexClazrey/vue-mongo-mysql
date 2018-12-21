@@ -2,6 +2,10 @@ const sec = require('../models/mysql/security');
 
 // leave priName and bid to be empty to skip privilege check
 async function simpleModelCall(req, res, modelAsyncFunction, bid, priName) {
+    await modelCall(req, res, modelAsyncFunction, null, null, bid, priName);
+}
+
+async function modelCall(req, res, modelAsyncFunction, modelArguments, modelDataCallback, bid, priName) {
     try {
         // secure process
         if(priName) {
@@ -13,12 +17,16 @@ async function simpleModelCall(req, res, modelAsyncFunction, bid, priName) {
                 return;
             }
         }
-        var data = await modelAsyncFunction();
-        if(data) 
-            res.send({
-                success: true,
-                data,
-            })
+        modelArguments = modelArguments ? modelArguments : [];
+        var data = await modelAsyncFunction(...modelArguments);
+        if(data)
+            if(modelDataCallback)
+                modelDataCallback(data);
+            else
+                res.send({
+                    success: true,
+                    data,
+                })
         else
             res.send({success: true});
     } catch(err) {
@@ -27,5 +35,6 @@ async function simpleModelCall(req, res, modelAsyncFunction, bid, priName) {
 }
 
 module.exports = {
-    simpleModelCall
+    simpleModelCall,
+    modelCall
 }

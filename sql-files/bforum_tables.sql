@@ -1179,9 +1179,9 @@ DELIMITER ;
 
 DELIMITER $$
 USE `bforum`$$
-CREATE PROCEDURE `delete_user_from_group` (in _uid int, in _gid int, in _bid int)
+CREATE PROCEDURE `delete_user_from_group` (in _id int)
 BEGIN
-	delete from `user_to_group` where `user_id` = _uid and `group_id` = _gid and `board_id` = _bid;
+	delete from `user_to_group` where `id` = _id;
 END$$
 
 DELIMITER ;
@@ -1262,6 +1262,19 @@ BEGIN
 	if enabled then
 		select concat('** ', msg) as '[debug]';
 	end if;
+END$$
+
+DELIMITER ;
+
+-- -----------------------------------------------------
+-- procedure delete_board
+-- -----------------------------------------------------
+
+DELIMITER $$
+USE `bforum`$$
+CREATE PROCEDURE `delete_board` (in _bid int)
+BEGIN
+	delete from `board` where `id` = _bid;
 END$$
 
 DELIMITER ;

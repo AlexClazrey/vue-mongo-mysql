@@ -1,19 +1,49 @@
 import api from '@/services/api'
 
+const ax = api('/group');
+
 export default {
     listGroup() {
-        return api().get('/group');
+        return ax.get('/group');
     },
+    addGroup(name, priority) {
+        return ax.post('/group', {name, priority});
+    },
+    removeGroup(gid) {
+        return ax.delete('/group/' + gid);
+    },
+
     listPrivileges() {
-        return api().get('/group/privileges');
+        return ax.get('/privilege');
     },
+    addPrivilege(name) {
+        return ax.post('/privilege', {name});
+    },
+    removePrivilege(priId) {
+        return ax.delete('/privilege/' + priId);
+    },
+
     listUserToGroup() {
-        return api().get('/group/user-to-group');
+        return ax.get('/user-to-group');
     },
+    addUserToGroup(uid, gid, bid) {
+        return ax.post('/user-to-group', {uid, gid, bid});
+    },
+    removeUserFromGroup(id) {
+        return ax.delete('/user-to-group/' + id);
+    },
+
     listGroupToPrivileges() {
-        return api().get('/group/group-to-privileges');
+        return ax.get('/group-to-privileges');
     },
+    addPrivilegeToGroup(priId, gid, permit) {
+        return ax.post('/group-to-privileges', {priId, gid, permit});
+    },
+    removePrivilegeFromGroup(priId, gid) {
+        return ax.delete('/group-to-privileges/?pri_id=' + priId + '&gid=' + gid);
+    },
+
     listUser() {
-        return api().get('/group/user-list');
-    }
+        return ax.get('/user-list');
+    },
 };

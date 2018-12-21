@@ -1,21 +1,18 @@
 import api from '@/services/api'
 
+var ax = api('/posts');
 export default {
-	// 这里面await的结构和各种可能失败的细节我还不清楚
 	fetchPosts(params) {
-		return api().get('/posts?bid=' + params);
+		return ax.get('?bid=' + params);
 	},
 	addPost(params) {
-		return api().post('posts/draft', params);
+		return ax.post('/draft', params);
 	},
 	getPost(params) {
-		return api().get('posts/' + params.id);
-	},
-	updatePost(params) {
-		return api().put('posts/' + params.id, params);
+		return ax.get('/' + params.id);
 	},
 	deletePost(params) {
-		return api().delete('posts/' + params.id);
+		return ax.delete('/' + params.id);
 	}
 };
 

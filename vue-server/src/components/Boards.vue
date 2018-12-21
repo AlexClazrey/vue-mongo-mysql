@@ -1,8 +1,8 @@
 <template>
     <div id="Boards">
         <div class="router-link">
-            <ul class="list" v-for="board in boards" :key="board.bid">
-                <li class="li"><router-link :to="{ name : 'posts', params:{ id: board.bid }}" >{{ board.name }}</router-link></li>
+            <ul class="list" v-for="board in boards" :key="board.id">
+                <li class="li"><router-link :to="{ name : 'posts', params:{ id: board.id }}" >{{ board.name }}</router-link></li>
             </ul>
         </div>
         <router-view/>
@@ -12,7 +12,6 @@
 <script>
 import BoardService from '../services/boards';
 import Posts from './PostsList.vue';
-//import Vuex from 'vuex';
 
 export default {
     name: 'boards',

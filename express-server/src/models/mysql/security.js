@@ -69,12 +69,13 @@ async function checkPrivilegeAndCookie(cookies, uid, bid, priName) {
     }
 }
 
+// this reads uid/bid from req.body
 // if you want to check privilege on board, req.body.bid or req.body.pPid must be set
 // return true for hasProblem, return false for ok.
 async function autoCheck(req, res, priName) {
     var uid = req.body.uid, bid;
     // if uid-s conflict
-    if(req.cookies.uid != req.body.uid) {
+    if(req.body.uid && req.cookies.uid != req.body.uid) {
         res.send({
             success: false,
             badAuth: true,

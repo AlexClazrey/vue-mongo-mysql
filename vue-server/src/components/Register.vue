@@ -118,7 +118,7 @@ export default {
 </script>
 
 
-<style>
+<style scoped>
 #register {
     font-family: monospace;
     text-align: center;
