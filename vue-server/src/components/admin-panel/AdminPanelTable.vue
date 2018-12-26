@@ -16,7 +16,7 @@
             </template>
             <template v-else>
                 <tr v-for="entry in data" :key="entry.id">
-                    <td v-for="property in properties" :key="property">{{ entry[property] }}</td>
+                    <td v-for="property in properties" :key="property">{{ wrapContent(entry[property]) }}</td>
                     <td v-if="showButton">
                         <button @click="buttonCallback(entry)">{{ buttonText }}</button>
                     </td>
@@ -43,7 +43,17 @@ export default {
         buttonText: String, 
         buttonCallback: Function,
     },
-    
+    methods: {
+        wrapContent(content) {
+            if(content === null) {
+                return '<null>'
+            } else if(typeof content === 'undefined') {
+                return '<undefined>'
+            } else {
+                return content;
+            }
+        }
+    }
 }
 </script>
 

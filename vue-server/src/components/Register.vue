@@ -52,7 +52,7 @@ export default {
                 email: '邮箱'
             },
             warning: {
-                username: '用户名只能由大小写字母和数字组成。',
+                username: '用户名只能由小写字母和数字组成。',
                 pass: '密码只能由大小写字母和数字和六个特殊字符(%$-_=&)组成，密码长度在6到20之间。',
                 repeatPass: '两组密码不相符。',
                 email: '请输入正确的邮箱。',
@@ -63,7 +63,7 @@ export default {
     },
     computed: {
         usernameInvalid() {
-            return !(this.table.username.match(/^[a-zA-Z0-9]+$/));
+            return !(this.table.username.match(/^[a-z0-9]+$/));
         },
         passInvalid() {
             return !(this.table.pass.match(/^[a-zA-Z0-9%-_=&$]{6,20}$/));
@@ -85,6 +85,7 @@ export default {
                 return;
             }
             var alertText = '';
+            this.table.username = this.table.username.toLowerCase();
             for(var keyName in this.table) {
                 this.table[keyName] = this.table[keyName].trim();
                 if(!this.table[keyName]) {

@@ -179,10 +179,10 @@ export default {
             var result = await groupApi.addGroup(this.groupName, this.groupPriority);
             if(result.data && result.data.success) {
                 alert('添加成功');
-                this.$store.dispatch('refreshGroups');
             } else {
                 alert('添加失败');
             }
+            this.$store.dispatch('refreshGroups');
         },
         async removeGroup(entry) {
             if(entry.id == 1) {
@@ -197,20 +197,24 @@ export default {
                 var result = await groupApi.removeGroup(entry.id);
                 if(result.data && result.data.success) {
                     alert('删除成功');
-                    this.$store.dispatch('refreshGroups');
+                } else {
+                    alert('删除失败');
                 }
+                this.$store.dispatch('refreshGroups');
             }
         },
         async addPrivilege() {
             var result = await groupApi.addPrivilege(this.privilegeName);
             if(result.data && result.data.success) {
-                alert('Privilege added.')
-                this.$store.dispatch('refreshPrivileges');
+                alert('添加成功');
+            } else {
+                alert('添加失败');
             }
+            this.$store.dispatch('refreshPrivileges');
         },
         async removePrivilege(entry) {
             if(entry.name == 'user admin') {
-                alert('You cannot remove the admin privilege.');
+                alert('你不能删除管理员这个权限。');
                 return;
             }
             if(this.adminPanel.groupToPrivileges.find(x => x.gid == 1 && x.priId == entry.id)) {
@@ -220,25 +224,31 @@ export default {
             if(confirm('Do you want to remove the privilege "' + entry.name + '"?')) {
                 var result = await groupApi.removePrivilege(entry.id);
                 if(result.data && result.data.success) {
-                    alert('Privilege removed');
-                    this.$store.dispatch('refreshPrivileges');
+                    alert('删除成功');
+                } else {
+                    alert('删除失败');
                 }
+                this.$store.dispatch('refreshPrivileges');
             }
         },
         async addBoard() {
             var result = await boardApi.addBoard(this.boardName);
             if(result.data && result.data.success) {
-                alert('Board added');
-                this.$store.dispatch('refreshBoards');
+                alert('添加成功');
+            } else {
+                alert('添加失败');
             }
+            this.$store.dispatch('refreshBoards');
         },
         async removeBoard(entry) {
             if(confirm('Do you really want to remove the board "' + entry.name + '"?\nAll posts within will be hidden.')) {
                 var result = await boardApi.removeBoard(entry.id);
                 if(result.data && result.data.success) {
-                    alert('Board removed.');
-                    this.$store.dispatch('refreshBoards');
+                    alert('删除成功');
+                } else {
+                    alert('删除失败');
                 }
+                this.$store.dispatch('refreshBoards');
             }
         },
         async addUserToGroup() {

@@ -4,7 +4,7 @@
         <div class="login-model">
             <div class="user-name">
                 <input class="text" type="text" placeholder="Username" v-model="username">
-                <p v-if="this.username.length > 0 && usernameInvalid">用户名只能由大小写字母和数字组成。</p>
+                <p v-if="this.username.length > 0 && usernameInvalid">用户名里只会出现小写字母和数字。</p>
             </div>
             <div class="user-password">
                 <input class="pass" type="password" placeholder="Password" v-model="password">
@@ -31,14 +31,15 @@ export default {
     },
     computed: {
         usernameInvalid() {
-            return !(this.username.match(/^[a-zA-Z0-9]+$/));
+            return !(this.username.match(/^[a-z0-9]+$/));
         },
     },
     methods: {
         async confirmLogin(){
             // TODO we can do a shake animation here.
+            this.username = this.username.toLowerCase();
             if(this.usernameInvalid) {
-                alert('用户名格式不正确');
+                alert('用户名里只会出现小写字母和数字');
                 return;
             }
             this.username = this.username.trim();

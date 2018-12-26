@@ -1,87 +1,71 @@
 <template>
-  <div id="app">
-    <header class="main-header">
-      <div class="container">
-        <h1>BeForum</h1>
-      </div>
-    </header>
-    <nav class="main-nav">
-      <div class="container">
-        <router-link to="/">Home</router-link> |
-        <router-link to="/boards">Forum</router-link> |
-        <router-link to="/about">About</router-link> |
-        <router-link to="/login">Login</router-link>
-      </div>
-    </nav>
-    <main>
-      <router-view/>
-    </main>
-    <footer class="main-footer">
-      <p>Copyright &copy; 2018 BeForum</p>
-    </footer>
-  </div>
+  <v-app>
+    <v-toolbar color="rgb(255, 177, 181)" app>
+      <header class="main-header">
+        <v-toolbar-title class="headline text-uppercase">
+          <span>BeForum</span>
+          <span class="font-weight-light">BETA</span>
+        </v-toolbar-title>
+      </header>
+      <v-spacer></v-spacer>
+      <nav class="main-nav">
+        <v-btn v-for="navitem in navList" :key="navitem.name" :to="navitem.to" flat>
+            {{ navitem.name }}
+        </v-btn>
+      </nav>
+    </v-toolbar>
+    <v-content class="main-content">
+      <router-view />
+    </v-content>
+    <v-footer class="main-footer" color="#3a3737" dark absolute height="auto">
+      <v-card class="flex" color="#3a3737" flat tile>
+        <v-card-actions class="justify-center">
+          <p>Copyright &copy; 2018 BeForum</p>
+        </v-card-actions>
+      </v-card>
+    </v-footer>
+  </v-app>
 </template>
 
 <script>
-export default {
-  mounted: function() {
+  import HelloWorld from './components/HelloWorld'
+
+  export default {
+    name: 'App',
+    components: {
+      HelloWorld
+    },
+    data() {
+      return {
+      }
+    },
+    computed: {
+      navList() { return this.$store.getters.navList; }
+    },
+    mounted: function () {
       this.$store.dispatch('refreshBoards');
-  },
-}
-
+    },
+  }
 </script>
-
-
 <style>
-#app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  color: #2c3e50;
-  position: relative;
-}
-body {
-  margin: 0;
-}
-.container {
-  max-width: 960px;
-  min-width: 500px;
-  margin: 0 auto;
-}
-.main-header {
-  background: rgb(255, 116, 123);
-  padding-top: 20px;
-  padding-bottom: 10px;
-  color: rgb(255, 255, 255);
-  overflow: hidden;
-}
-.main-header h1 {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  letter-spacing: 0.1em;
-  font-size: 40px;
-}
-.main-nav {
-  background: #5a4949;
-  color: rgb(255, 247, 251);
-  padding-top: 15px;
-  padding-bottom: 15px;
-  padding-left: 50px;
-  font-size: 20px;
-  font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
-}
-.main-nav a {
-  color: rgb(255, 247, 251);
-  text-decoration: none;
-}
-.main-footer {
-  background: #3a3737;
-  color: #fff;
-  text-align: center;
-  bottom: 0;
-  width: 100%;
-  padding-top: 40px;
-  padding-bottom: 30px;
-  margin-top: 40px;
-  overflow: hidden;
-}
+  .main-nav button {
+    color: #111;
+    text-decoration: none;
+  }
+
+  .main-footer {
+    text-align: center;
+  }
+  
+  .main-content {
+    margin-top: 20px;
+    margin-bottom: 200px;
+  }
+
+  .main-footer {
+    padding-top: 30px;
+    padding-bottom: 20px;
+    font-size: 16px;
+  }
+
 </style>

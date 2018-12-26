@@ -32,6 +32,11 @@ async function simpleApiCall(context, mutationName, errMsg, apiAsyncFunction, ..
 
 export default new Vuex.Store({
   state: {
+    navList: [
+      { name: 'Home', to: '/' },
+      { name: 'Boards', to: '/boards' },
+      { name: 'Login', to: '/login' },
+    ],
     user: null,
     boards: [],
     adminPanel: {
@@ -45,6 +50,7 @@ export default new Vuex.Store({
     },
   },
   getters: {
+    navList: state => state.navList,
     uid: state => state.user ? state.user.id : null,
     user: state => state.user,
     boards: state => state.boards,
@@ -83,8 +89,8 @@ export default new Vuex.Store({
       $.cookie('user', cookies);
     },
     removeUserCookies: () => {
-      $.removeCookie('uid');
-      $.removeCookie('user');
+      $.removeCookie('uid', { expires: 7 }); // TODO 记住我这个选项到底应该持续多少天还需要说明，我这里先给了七天，实际上在SQL这边也需要更多的接口。
+      $.removeCookie('user', { expires: 7 }); // TODO 在注册方面还有检查是否被占用的功能还没有实现。
     },
     refreshBoards: async (context)=>{
       await simpleApiCall(context, 'setBoards', '获取板块列表出错。', boardApi.getBoards);
