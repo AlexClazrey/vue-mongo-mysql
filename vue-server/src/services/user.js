@@ -1,21 +1,29 @@
 import api from '@/services/api'
 
-export default{
+const ax = api('/user');
+
+export default {
     loginAndCookies(username, pass) {
-        return api().post('/user/login', {
+        return ax.post('/login', {
             username,
             pass
         });
     },
-    userRegister(username,pass,nickname,email){
-        return api().post('/user/register',{
+    userRegister(username, pass, nickname, email) {
+        return ax.post('/register', {
             username,
             pass,
             nickname,
             email
         });
     },
+    userLogout() {
+        return ax.delete('/');
+    },
     getInfo(uid) {
-        return api().get('/user/' + uid);
+        return ax.get('/' + uid);
+    },
+    getPrivileges(uid) {
+        return ax.get('/' + uid + '/privileges');
     }
 }

@@ -221,7 +221,7 @@ async function checkUserPrivilegeList(uid, username) {
     var con;
     try {
         con = await pool.aGet();
-        var cmd = 'select uid, gid, bid, pri_id, permit from v_user_privilege ';
+        var cmd = 'select uid, gid, bid, pri_id, permit, group_name, pri_name from v_user_privilege ';
         if(uid) {
             cmd += 'where uid = ' + con.escape(uid) + ';';
         } else if (username) {
@@ -241,6 +241,8 @@ async function checkUserPrivilegeList(uid, username) {
             bid: entry.bid,
             priId: entry. pri_id,
             permit: entry.permit,
+            groupName: entry.group_name,
+            priName: entry.pri_name,
         }));
     } catch (err) {
         console.error('[Error][MySQL] check user privilege list failed', cmd)

@@ -9,7 +9,10 @@
       </header>
       <v-spacer></v-spacer>
       <nav class="main-nav">
-        <v-btn v-for="navitem in navList" :key="navitem.name" :to="navitem.to" flat>
+        <v-btn v-for="navitem in navFilted" :key="navitem.name" 
+          :to="navitem.to ? navitem.to : '' " 
+          @click="navitem.click ? navClick(navitem.click) : undefined"
+          flat>
             {{ navitem.name }}
         </v-btn>
       </nav>
@@ -28,22 +31,36 @@
 </template>
 
 <script>
-  import HelloWorld from './components/HelloWorld'
-
   export default {
     name: 'App',
     components: {
-      HelloWorld
     },
     data() {
       return {
       }
     },
     computed: {
-      navList() { return this.$store.getters.navList; }
+      navList() { return this.$store.getters.navList; },
+      navFilted() {
+        return this.navList.filter(item => this.visibleCalculate(item.visible));
+      },
     },
     mounted: function () {
-      this.$store.dispatch('refreshBoards');
+      this.$store.dispatch('pageLoad');
+    },
+    methods: {
+      navClick(clickCallback) {
+        clickCallback(this.$store);
+      },
+      visibleCalculate(visible) {
+        if(typeof visible === 'undefined') {
+          return true;
+        } else if(visible instanceof Function) {
+          return visible(this.$store);
+        } else {
+          return visible;
+        }
+      },
     },
   }
 </script>

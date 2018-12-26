@@ -1,5 +1,8 @@
 const express = require('express');
-const user = require('../models/mysql/user.js');
+const group = require('../models/mysql/group');
+const user = require('../models/mysql/user');
+const cookies = require('../models/mysql/cookies');
+const routerUtil = require('./util');
 
 const router = express.Router();
 
@@ -56,6 +59,15 @@ router.get('/:uid', async (req, res) => {
     } catch(err) {
         res.send({success: false});
     }
+})
+
+router.get('/:uid/privileges', async(req, res) => {
+    routerUtil.modelCall(req, res, group.checkUserPrivilegeList, [req.params.uid], null, null, null, true);
+})
+
+// user logout
+router.delete('/', async(req, res) => {
+    routerUtil.modelCall(req, res, cookies.delete, [req.cookies.user], null, null, null, true);
 })
 
 module.exports = router;

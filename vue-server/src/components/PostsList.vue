@@ -54,14 +54,14 @@ export default {
 	mounted() {
 		this.board_id = this.$route.params.id;
 		this.getPosts(this.board_id);
-		console.log(this.board_id);
+		// console.log(this.board_id);
 	},
 	methods: {
 		async getPosts(params) {
 			const response = await PostsService.fetchPosts(params);
 			// there is a loading scene, not displaying no posts...
 			// 这里面还有很多多人在线的话同步刷新的坑
-			console.log(response);
+			// console.log(response);
 			this.loading = false;
 			if(response.data.success) {
 				this.posts = response.data.data;

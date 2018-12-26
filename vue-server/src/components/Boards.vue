@@ -10,11 +10,13 @@
 </template>
 
 <script>
-import BoardService from '../services/boards';
 import Posts from './PostsList.vue';
 
 export default {
     name: 'boards',
+    components: {
+        "posts": Posts
+    },
     data() {
         return {
         }

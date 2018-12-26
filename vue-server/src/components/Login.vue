@@ -47,10 +47,9 @@ export default {
             if(this.username == '' || this.password == ''){
                 window.alert("Your user name or password is fault!");
             } else {
-                const response = await UserService.loginAndCookies(this.username, this.password);
-                if(response.data.success){
-                    this.$store.dispatch('setUid', response.data.uid);
-                    this.$store.dispatch('setUserCookies', response.data.cookies);
+                const res = await UserService.loginAndCookies(this.username, this.password);
+                if(res.data && res.data.success){
+                    this.$store.dispatch('userLogin', res.data);
                     window.alert("success");
                 } else {
                     window.alert("Your username or password is wrong");

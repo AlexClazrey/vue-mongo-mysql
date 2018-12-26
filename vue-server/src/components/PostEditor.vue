@@ -32,8 +32,8 @@
 				};
 				var data = {};
 				Object.assign(data,UID,this.post);
-				console.log(this.post);
-				console.log(data);
+				//console.log(this.post);
+				//console.log(data);
 				this.$emit('emit', data);
 			}
 		}

@@ -62,4 +62,8 @@ router.delete('/group-to-privileges/', async(req, res) => {
     routerUtil.modelCall(req, res, group.removePrivilegeFromGroup, [req.query.pri_id, req.query.gid], null, null, 'user admin');
 })
 
+router.get('/check-privileges', async(req, res) => {
+    routerUtil.modelCall(req, res, group.checkUserPrivilegeList, [req.query.uid, req.query.username], null, null, 'user admin');
+})
+
 module.exports = router;

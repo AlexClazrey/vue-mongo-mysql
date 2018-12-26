@@ -39,7 +39,7 @@ async function updateCookiesWrap(uid, cookies) {
 async function checkPrivilegeAndCookie(cookies, uid, bid, priName) {
     // cookies can be a string or {user: <str>}
     if(typeof cookies === 'object' && !cookies.user) {
-        console.warn('[Warn][Req] got an empty cookie:', cookies);
+        console.warn('[Warn][Privilege] got an empty cookie:', cookies);
         return {
             badAuth: true
         }

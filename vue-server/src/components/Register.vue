@@ -104,8 +104,7 @@ export default {
             this.loading = false;
             if(res.data && res.data.success) {
                 alert('注册成功');
-                this.$store.dispatch('setUid', res.data.uid);
-                this.$store.dispatch('setUserCookies', res.data.cookies);
+                this.$store.dispatch('userLogin', res.data);
             } else {
                 if(res.data.msg) {
                     alert('注册失败\n' + res.data.msg);
