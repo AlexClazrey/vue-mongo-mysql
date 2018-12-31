@@ -34,7 +34,7 @@ async function updateCookiesWrap(uid, cookies) {
 }
 
 // cookies can be a string or { user: <string> }
-// priName and bid can be null for check uid-cookies pair only
+// priName can be null for check uid-cookies pair only
 // return null for ok, others merge this into json-response
 async function checkPrivilegeAndCookie(cookies, uid, bid, priName) {
     // cookies can be a string or {user: <str>}
@@ -50,7 +50,7 @@ async function checkPrivilegeAndCookie(cookies, uid, bid, priName) {
     var checkRes = await updateCookiesWrap(uid, cookies);
     if(checkRes) {
         // check if check only cookies
-        if(priName && bid) {
+        if(priName) {
             var boardPri = await checkPrivilege(uid, bid, priName);
             if(boardPri) {
                 return null;
@@ -72,7 +72,7 @@ async function checkPrivilegeAndCookie(cookies, uid, bid, priName) {
 // this reads uid/bid from req.body
 // if you want to check privilege on board, req.body.bid or req.body.pPid must be set
 // return true for hasProblem, return false for ok.
-async function autoCheck(req, res, priName) {
+async function checkPostReq(req, res, priName) {
     var uid = req.body.uid, bid;
     // if uid-s conflict
     if(req.body.uid && req.cookies.uid != req.body.uid) {
@@ -110,10 +110,9 @@ function updateCookiesMiddleware(req, res, next) {
     next();
 }
 
-
 module.exports = {
     checkPrivilege,
     checkPrivilegeAndCookie,
-    autoCheck,
+    checkPostReq,
     updateCookiesMiddleware
 }

@@ -23,10 +23,14 @@ router.get('/', async (req, res) => {
 // save draft
 router.post('/draft', async (req, res) => {
     try {
-        // TODO split commit and reply privileges
         // if has problem, return value will be true
-        if(await sec.autoCheck(req, res, 'commit post'))
-            return;
+        if(req.body.isReply) {
+            if(await sec.checkPostReq(req, res, 'reply post'))
+                return;
+        } else {
+            if(await sec.checkPostReq(req, res, 'commit post'))
+                return;
+        }
         var newPid = await post.saveDraft(req.body.uid, req.body.pid, req.body.title, req.body.content)
         if(newPid > 0) {
             // 内容创建成功
@@ -61,7 +65,7 @@ router.post('/draft', async (req, res) => {
 router.post('/', async (req, res) => {
     try {
         // if has problem, this will be true
-        if(await sec.autoCheck(req, res, 'commit post'))
+        if(await sec.checkPostReq(req, res, 'commit post'))
             return;
         await post.commitPost(req.body.uid, req.body.pid);
         res.send({success: true});
