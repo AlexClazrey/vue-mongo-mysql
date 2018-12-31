@@ -102,7 +102,7 @@
 
 <script>
 import {mapActions, mapGetters} from 'vuex';
-import AdminPanelTable from './AdminPanelTable.vue';
+import AdminPanelTable from '@/components/admin-panel/AdminPanelTable.vue';
 import groupApi from '@/services/group.js';
 import boardApi from '@/services/boards.js';
 

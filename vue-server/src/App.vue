@@ -1,10 +1,10 @@
 <template>
-  <v-app>
-    <v-toolbar color="rgb(255, 177, 181)" app>
+  <v-app class="white">
+    <v-toolbar flat class="amber lighten-4">
       <header class="main-header">
         <v-toolbar-title class="headline text-uppercase">
           <span>BeForum</span>
-          <span class="font-weight-light">BETA</span>
+          <span class="font-weight-light"> BETA</span>
         </v-toolbar-title>
       </header>
       <v-spacer></v-spacer>
@@ -45,7 +45,7 @@
         return this.navList.filter(item => this.visibleCalculate(item.visible));
       },
     },
-    mounted: function () {
+    created: function () {
       this.$store.dispatch('pageLoad');
     },
     methods: {
@@ -75,8 +75,7 @@
   }
   
   .main-content {
-    margin-top: 20px;
-    margin-bottom: 200px;
+    margin-bottom: 150px;
   }
 
   .main-footer {

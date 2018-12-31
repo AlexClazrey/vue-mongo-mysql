@@ -35,7 +35,7 @@ const initState = {
   nav: {
     list: [
       { name: 'Home', to: '/' },
-      { name: 'Boards', to: '/boards' },
+      { name: 'Posts', to: '/posts' },
       { name: 'Login', to: '/login', visible: (context) => !context.getters.uid },
       { name: 'Admin Panel', to: '/admin-panel', visible: (context) => context.getters.privilegeNames.includes('user admin') },
       { name: 'Logout', click: (context) => { context.dispatch('userLogout'); }, visible: (context) => context.getters.uid },

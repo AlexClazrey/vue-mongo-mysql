@@ -1,8 +1,8 @@
 <template lang="pug">
-p Hello World.
+    
 </template>
-
 <script>
-  export default {
-  }
+export default {
+    
+}
 </script>
