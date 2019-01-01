@@ -98,18 +98,19 @@ router.get('/:pid', async(req, res) => {
     }
 })
 
-// Get post's recent replies list
+// Get post replies list
 // reply-list/<post-id>?page=<page>
 router.get('/reply-list/:pid', async(req, res) => {
     try {
         var page = req.query.page || 1;
-        var replies = await post.getReplies(req.params.pid, (page - 1) * 20, 20);
+        var replies = await post.getReplies(req.params.pid, (page - 1) * 20, 20, false);
         res.send({
             success: true,
             data: replies
         });
     } catch (err) {
         res.send({success: false});
+        console.error('[Error][Router] get post reply list error');
     }
 });
 

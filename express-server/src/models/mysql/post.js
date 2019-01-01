@@ -117,7 +117,7 @@ async function getRepliesCount(pid) {
 async function getListAndReplies(bid, page) {
 	var postList = await getList(bid, page);
 	var repliesPromises = postList.map(post => {
-		return getReplies(post.pid, 0, 5);
+		return getReplies(post.pid, 0, 5, true);
 	});
 	var repliesCountPromises = postList.map(post => {
 		return getRepliesCount(post.pid);
@@ -151,12 +151,12 @@ async function getPost(pid) {
 	}
 }
 
-async function getReplies(pid, offset, count) {
+async function getReplies(pid, offset, count, descending) {
 	var con;
 	try {
 		con = await pool.aGet();
 		var cmd = 
-			`select * from v_post_reply_list where p_pid = ${con.escape(pid)} limit ${con.escape(offset)}, ${con.escape(count)};`;
+			`select * from v_post_reply_list where p_pid = ${con.escape(pid)} order by \`commit_time\` ${descending ? 'desc' : 'asc'} limit ${con.escape(offset)}, ${con.escape(count)};`;
 		var res = await pool.aQuery(con, cmd);
 		return res;
 	} catch (err) {

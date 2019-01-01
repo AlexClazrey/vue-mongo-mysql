@@ -1446,8 +1446,7 @@ select
 from v_post_reply_content rc
 	join commit_post cp on rc.c_pid = cp.post_id
     join `user` on cp.user_id = `user`.id
-where rc.deleted = 0
-order by `commit_time` desc;
+where rc.deleted = 0;
 
 -- -----------------------------------------------------
 -- View `bforum`.`v_post_board`

@@ -75,7 +75,8 @@ async function checkPrivilegeAndCookie(cookies, uid, bid, priName) {
 async function checkPostReq(req, res, priName) {
     var uid = req.body.uid, bid;
     // if uid-s conflict
-    if(req.body.uid && req.cookies.uid != req.body.uid) {
+    if(req.cookies.uid != req.body.uid) {
+        console.log('[Warn][Sec] user id mismatch','cookies.uid', req.cookies.uid, 'req.uid', uid);
         res.send({
             success: false,
             badAuth: true,

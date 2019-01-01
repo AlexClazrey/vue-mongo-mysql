@@ -50,8 +50,11 @@ export default {
                 const res = await UserService.loginAndCookies(this.username, this.password);
                 if(res.data && res.data.success){
                     this.$store.dispatch('userLogin', res.data);
-                    window.alert("success");
-                    this.$router.go(-1);
+                    window.alert("Login Success");
+                    if(window.history.length > 1)
+                        this.$router.go(-1);
+                    else
+                        this.$router.replace('/');
                 } else {
                     window.alert("Your username or password is wrong");
                 }

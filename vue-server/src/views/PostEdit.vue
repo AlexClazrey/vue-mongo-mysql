@@ -15,6 +15,7 @@ v-card.transparent(flat style="max-width: 960px; margin: 0 auto;")
 <script>
 import PostEditor from '@/components/post-edit/PostEditor.vue';
 import postApi from '@/services/posts';
+import {mapGetters} from 'vuex';
 import $ from 'jquery';
 require('jquery.cookie');
 
@@ -33,6 +34,7 @@ export default {
     }
   },
   computed: {
+    ...mapGetters(['badAuth', 'badPrivilege']),
     target() {
       var par = this.$route.params;
       return {
@@ -68,6 +70,16 @@ export default {
     this.checkLogin();
     this.fetchPost(this.target.epid);
   },
+  watch: {
+    badAuth(val) {
+      if(val)
+        alert('登录信息失效，无法保存帖子的内容，请手动复制内容到其他程序之后重新登录。');
+    },
+    badPrivilege(val) {
+      if(val)
+        alert('你没有权限在此编辑内容，内容将不会保存。');
+    }
+  },
   methods: {
     checkLogin() {
       // 如果是刷新页面的话这个时候store的请求还没有收到结果，所以先用cookies做判断
@@ -95,7 +107,7 @@ export default {
       // prepare post request content
       post.uid = this.$store.getters.uid;
       if(!post.uid) {
-        alert('无法保存帖子的内容，请手动复制内容到其他程序之后重新登录。');
+        alert('登录信息失效，无法保存帖子的内容，请手动复制内容到其他程序之后重新登录。');
         return null;
       }
       this.loading = true;
@@ -121,12 +133,15 @@ export default {
         this.newPid = res.data.pid;
         return this.newPid;
       } else {
-        alert('保存失败，请重试')
+        alert('保存失败，请重试');
         return null;
       }
     },
     async submitPost(post) {
-      await this.savePost(post);
+      if(!await this.savePost(post)) {
+        // 所有返回了null的都已经给出了alert
+        return;
+      }
       this.loading = true;
       var pid = this.newPid || this.target.epid;
       var res = await postApi.commitPost({

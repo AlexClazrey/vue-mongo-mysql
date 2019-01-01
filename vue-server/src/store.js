@@ -20,7 +20,11 @@ async function simpleApiCall(context, mutationName, errMsg, apiAsyncFunction, ..
         context.commit(mutationName, data.data.data);
     } else {
       if(data.data.badAuth) {
-        context.dispatch('removeUserCookies');
+        // 绝对不能在这里再去提交带权限的simpleApiCall的请求，这个无限循环很可怕的
+        context.dispatch('userLogout', {
+          noRequest: true,
+          noRedirect: true,
+        });
         context.commit('setBadAuth', true);
       } else if (data.data.badPrivilege) {
         context.commit('setBadPrivilege', true);
@@ -70,6 +74,10 @@ const initState = {
   },
 };
 
+const cookiesOption = {
+  path: '/',
+  expires: 7,
+}
 function deepCopy(source) {
   return $.extend(true, {}, source);
 }
@@ -147,11 +155,13 @@ export default new Vuex.Store({
       context.dispatch('setUserCookies', data.cookies);
       context.dispatch('fetchUser');
     },
-    userLogout: async (context) => {
-      await simpleApiCall(context, null, '请求注销出错', userApi.userLogout);
+    userLogout: async (context, options) => {
+      if(options && !options.noRequest)
+        await simpleApiCall(context, null, '请求注销出错', userApi.userLogout);
       context.dispatch('resetPrivilegedInfo');
       context.dispatch('removeUserCookies');
-      router.push({name: 'login'})
+      if(options && !options.noRedirect)
+        router.push({name: 'login'})
     },
     resetPrivilegedInfo(context) {
       context.commit('resetUser');
@@ -160,17 +170,17 @@ export default new Vuex.Store({
     setUid: (context, uid) => {
       // use uid to communicate to background to get user info here
       if(uid) {
-        $.cookie('uid', uid);
+        $.cookie('uid', uid, cookiesOption);
       } else {
         alert('uid not valid');
       }
     },
     setUserCookies: (context, cookies) => {
-      $.cookie('user', cookies);
+      $.cookie('user', cookies, cookiesOption);
     },
     removeUserCookies: () => {
-      $.removeCookie('uid', { expires: 7 }); // TODO 记住我这个选项到底应该持续多少天还需要说明，我这里先给了七天，实际上在SQL这边也需要更多的接口。
-      $.removeCookie('user', { expires: 7 }); // TODO 在注册方面还有检查是否被占用的功能还没有实现。
+      $.removeCookie('uid', cookiesOption); // TODO 记住我这个选项到底应该持续多少天还需要说明，我这里先给了七天，实际上在SQL这边也需要更多的接口。
+      $.removeCookie('user', cookiesOption); // TODO 在注册方面还有检查是否被占用的功能还没有实现。
     },
     fetchUser: (context) => {
       const uid = $.cookie('uid');
