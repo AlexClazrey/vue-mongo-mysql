@@ -16,6 +16,7 @@ router.get('/', async (req, res) => {
             data: data
         });
     } catch(err) {
+        console.log(err);
         res.send({success: false});
     }
 });
@@ -101,7 +102,8 @@ router.get('/:pid', async(req, res) => {
 // reply-list/<post-id>?page=<page>
 router.get('/reply-list/:pid', async(req, res) => {
     try {
-        var replies = await post.getReplies(req.params.pid, (page-1)*20, 20);
+        var page = req.query.page || 1;
+        var replies = await post.getReplies(req.params.pid, (page - 1) * 20, 20);
         res.send({
             success: true,
             data: replies

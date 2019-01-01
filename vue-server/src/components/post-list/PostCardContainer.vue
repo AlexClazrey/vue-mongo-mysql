@@ -1,6 +1,6 @@
 <template lang="pug">
-v-card.pa-4.mt-4(flat tile)
-  post-card(:post="post" :isReply="false" :isLastReply="false")
+v-card.pa-4(flat tile)
+  post-card(:post="post" :isReply="false" :isLastReply="false" :readingPost="readingPost")
   v-card.mt-2(flat)
     v-layout(row)
       v-flex(xs2 md1 v-if="hasReply")
@@ -20,9 +20,13 @@ v-card.pa-4.mt-4(flat tile)
         // TODO add "and xxx more posts..." info
         post-card.mt-1(
           v-for="reply, index in post.replies", :key="reply.c_pid",
-          :post="reply", :isReply="true", :isLastReply="index < post.replies.length - 1")
+          :post="reply", :isReply="true", :isLastReply="index < post.replies.length - 1",
+          :readingPost="readingPost")
+        v-card.mt-1.px-3.py-2(flat v-if="post.replies.length < post.repliesCount")
+          v-card(flat style="display: inline-block;" route :to="{name: 'read-post', params: {pid: post.pid}}")
+            span.my-0(style="font-size: 18px;") and {{ post.repliesCount - post.replies.length }} more replies...
       v-flex(xs6 md8 v-else)
-        v-card.white.px-2.pt-3(flat)
+        v-card.px-2.pt-3(flat)
           p(style="font-size: 18px;") No replies yet.
 </template>
 
@@ -32,6 +36,10 @@ export default {
   name: 'PostCardContainer',
   props: {
       post: Object,
+      readingPost: {
+        type: Boolean,
+        default: false, 
+      },
   },
   components: {
       'post-card': PostCard,

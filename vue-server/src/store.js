@@ -56,6 +56,7 @@ const initState = {
   },
   posts: {
     postsCountOnOnePage: 20,
+    repliesCountOnOnePage: 20,
   },
   boards: [],
   adminPanel: {

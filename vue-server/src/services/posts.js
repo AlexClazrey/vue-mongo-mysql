@@ -16,6 +16,9 @@ export default {
 	getPost(pid) {
 		return ax.get('/' + pid);
 	},
+	getReplies(pid, page) {
+		return ax.get('/reply-list/' + pid + '?page=' + page);
+	},
 	deletePost(pid) {
 		return ax.delete('/' + pid);
 	}

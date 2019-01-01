@@ -97,16 +97,42 @@ async function getList(bid, page) {
 	}
 }
 
+// 
+async function getRepliesCount(pid) {
+	var con;
+	try {
+		con = await pool.aGet();
+		var cmd = 'select count(*) as cnt from `reply` where parent_id=' + con.escape(pid) + ';';
+		var res = await pool.aQuery(con, cmd);
+		return res[0]['cnt'];
+	} catch (err) {
+		console.error('[Error][MySQL] get replies count failed', cmd);
+		throw err;
+	} finally {
+		pool.release(con);
+	}
+}
+
 // 在foreach里面不能用async她不会等你，这个操作要用Promise.all来实现
 async function getListAndReplies(bid, page) {
 	var postList = await getList(bid, page);
-	var replyPromises = postList.map(post => {
+	var repliesPromises = postList.map(post => {
 		return getReplies(post.pid, 0, 5);
 	});
-	var values = await Promise.all(replyPromises);
-	values.forEach((replies, index) => {
-		postList[index].replies = replies;
+	var repliesCountPromises = postList.map(post => {
+		return getRepliesCount(post.pid);
 	});
+	var allReplies = Promise.all(repliesPromises).then(values => {
+		values.forEach((reply, index) => {
+			postList[index].replies = reply;
+		});
+	});
+	var allCounts = Promise.all(repliesCountPromises).then(values => {
+		values.forEach((count, index) => {
+			postList[index].repliesCount = count;
+		})
+	});
+	await Promise.all([allReplies, allCounts]);
 	return postList;
 }
 
@@ -114,9 +140,9 @@ async function getPost(pid) {
 	var con;
 	try {
 		con = await pool.aGet();
-		var cmd = 'select * from v_post_content where pid =' + con.escape(pid) + ';';
+		var cmd = 'select * from v_ubp_list where pid =' + con.escape(pid) + ';';
 		var res = await pool.aQuery(con, cmd);
-		return res;
+		return res[0];
 	} catch (err) {
 		console.error('[Error][MySQL] get post detail failed', cmd);
 		throw err;
@@ -168,4 +194,5 @@ module.exports = {
 	getPost,
 	getReplies,
 	getPostBoard,
+	getRepliesCount,
 };

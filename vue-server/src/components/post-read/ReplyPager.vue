@@ -22,10 +22,10 @@ v-layout(row wrap)
                 v-icon(left) chevron_right
                 span next page
   v-flex(xs12 md3 align-center)
-    v-card.py-2.px-3.pink.lighten-5(flat)
-      v-btn.pink.white--text(block flat :to="{name: 'add-post-to-board', params: {bid: bid}}")
-        v-icon(left) add_circle_outline
-        span add post    
+    v-card.py-2.px-3.green.lighten-5(flat)
+      v-btn.green.white--text(block flat :to="{name: 'reply-post', params: {rpid: pid}}")
+        v-icon(left) reply
+        span reply    
 </template>
 
 <script>
@@ -34,7 +34,7 @@ export default {
     page: Number,
     failed: Boolean,
     empty: Boolean,
-    bid: Number,
+    pid: Number,
   },
   methods: {
     firstPage() { this.updatePage(1); },

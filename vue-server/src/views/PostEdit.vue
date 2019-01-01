@@ -48,7 +48,7 @@ export default {
       return "Add Post";
     },
     editorDesc() {
-      if(this.target.rpid) return "You are now replying to post #" + this.target.rpid + '.';
+      if(this.target.rpid) return "You are now replying post #" + this.target.rpid + '.';
       if(this.target.epid) return "You are now editing post #" + this.target.epid + '.';
       if(this.target.bid > 0) { 
         // search for board name

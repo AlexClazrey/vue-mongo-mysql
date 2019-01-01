@@ -2,14 +2,20 @@
 v-card.py-3.amber.lighten-5(:class="{'px-2':$vuetify.breakpoint.smAndDown, 'px-4': $vuetify.breakpoint.mdAndUp}" flat)
   post-pager(:page="page" :failed="failed" :empty="noNext" :bid="bid" @page="updatePage" @refresh="fetchPosts")
   v-layout(row wrap)
+    v-flex(xs12)
+      v-card(flat tile).px-3.pb-1.pt-2
+        p.ml-3.mt-4.mb-0.display-1 {{ boardName }}
     v-flex(xs12 v-if="!loading && !failed" v-for="post in posts" :key="post.pid")
       post-card-container(:post="post")
     v-flex(xs12 v-if="loading")
-      p.headline Loading Posts...
+      v-card(flat tile).px-3.pb-1.pt-2
+        p.pl-4.headline Loading Posts...
     v-flex(xs12 v-if="failed")
-      p.headline Server Busy...
+      v-card(flat tile).px-3.pb-1.pt-2
+        p.pl-4.headline Server Busy...
     v-flex(xs12 v-if="empty")
-      p.headline No posts here.
+      v-card(flat tile).px-3.pb-1.pt-2
+        p.pl-4.headline No posts here.
   post-pager(:page="page" :failed="failed" :empty="noNext" :bid="bid" @page="updatePage" @refresh="fetchPosts")
 </template>
 
@@ -39,6 +45,13 @@ export default {
     },
     noNext() {
       return this.posts.length < this.$store.state.posts.postsCountOnOnePage;
+    },
+    boardName() {
+      var bid = this.bid;
+      if(this.bid == 0) 
+        return 'All Boards';
+      var board = this.$store.getters.boards.filter(x => x.id == bid)[0]
+      return board ? board.name : null;
     }
   },
   watch: {
