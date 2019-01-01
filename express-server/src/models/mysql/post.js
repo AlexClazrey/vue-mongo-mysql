@@ -102,7 +102,8 @@ async function getRepliesCount(pid) {
 	var con;
 	try {
 		con = await pool.aGet();
-		var cmd = 'select count(*) as cnt from `reply` where parent_id=' + con.escape(pid) + ';';
+		var cmd = 'select count(*) as cnt from `reply` join `commit_post` on `reply`.`child_id`= `commit_post`.`post_id`'
+			+ ' where parent_id=' + con.escape(pid) + ';';
 		var res = await pool.aQuery(con, cmd);
 		return res[0]['cnt'];
 	} catch (err) {

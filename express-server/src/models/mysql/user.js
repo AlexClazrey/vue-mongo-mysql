@@ -83,6 +83,21 @@ async function getUserInfo(uid) {
 	}
 }
 
+async function getUserPublicInfo(uid) {
+	var con;
+	try {
+		con = await pool.aGet();
+		const cmd = 'select id, nickname, portrait from `user` where id=' + con.escape(uid) + ';';
+		var res = await pool.aQuery(con, cmd)
+		return res[0];
+	} catch(err) {
+		console.error('[Error][MySQL] get user public info failed.', uid);
+		throw err;
+	} finally {
+		pool.release(con);
+	}
+}
+
 async function getUserList() {
 	var con;
 	try {
@@ -145,6 +160,38 @@ async function getUidFromUsername(username) {
 	}
 }
 
+// get all posts of a user
+async function getUserPosts(uid) {
+	var con;
+	try {
+		con = await pool.aGet();
+		var cmd = 'select * from `v_user_post` where uid=' + con.escape(uid) + ';';
+		var res = await pool.aQuery(con, cmd);
+		return res;
+	} catch (err) {
+		console.error('[Error][MySQL] get user posts error', cmd);
+		throw err;
+	} finally {
+		pool.release(con);
+	}
+}
+
+// get all drafts of a user
+async function getUserDrafts(uid) {
+	var con;
+	try {
+		con = await pool.aGet();
+		var cmd = 'select * from `v_user_draft` where uid=' + con.escape(uid) + ';';
+		var res = await pool.aQuery(con, cmd);
+		return res;
+	} catch(err) {
+		console.error('[Error][MySQL] get user draft error', cmd);
+		throw err;
+	} finally {
+		pool.release(con);
+	}
+}
+
 module.exports = {
 	userLogin,
 	loginAndCookies,
@@ -153,4 +200,7 @@ module.exports = {
 	registerAndCookies,
 	getUidFromUsername,
 	getUserList,
+	getUserPosts,
+	getUserPublicInfo,
+	getUserDrafts,
 }

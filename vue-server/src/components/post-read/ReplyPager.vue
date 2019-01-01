@@ -23,7 +23,7 @@ v-layout(row wrap)
                 span next page
   v-flex(xs12 md3 align-center)
     v-card.py-2.px-3.green.lighten-5(flat)
-      v-btn.green.white--text(block flat :to="{name: 'reply-post', params: {rpid: pid}}")
+      v-btn.teal.white--text(block flat :to="{name: 'reply-post', params: {rpid: pid}}")
         v-icon(left) reply
         span reply    
 </template>

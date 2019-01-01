@@ -42,6 +42,8 @@ router.post('/register', (request, response) => {
     });
 });
 
+// get private info
+// TODO this function has no security protection
 router.get('/:uid', async (req, res) => {
     try {
         var userData = await user.getUserInfo(req.params.uid);
@@ -59,15 +61,42 @@ router.get('/:uid', async (req, res) => {
     } catch(err) {
         res.send({success: false});
     }
+});
+// get public info
+router.get('/:uid/info', async(req, res) => {
+    routerUtil.modelCall(req, res, user.getUserPublicInfo, [req.params.uid]);
 })
 
 router.get('/:uid/privileges', async(req, res) => {
-    routerUtil.modelCall(req, res, group.checkUserPrivilegeList, [req.params.uid], null, null, null, true);
+    if(req.params.uid != req.cookies.uid) {
+        res.send({
+            badAuth: true,
+            success: false,
+        })
+    } else {
+        routerUtil.modelCall(req, res, group.checkUserPrivilegeList, [req.params.uid], null, null, null, true);
+    }
 })
 
 // user logout
 router.delete('/', async(req, res) => {
     routerUtil.modelCall(req, res, cookies.delete, [req.cookies.user], null, null, null, true);
 })
+
+router.get('/:uid/posts', async(req, res) => {
+    routerUtil.modelCall(req, res, user.getUserPosts, [req.params.uid]);
+})
+
+router.get('/:uid/drafts', async(req, res) => {
+    if(req.params.uid != req.cookies.uid) {
+        res.send({
+            badAuth: true,
+            success: false,
+        })
+    } else {
+        routerUtil.modelCall(req, res, user.getUserDrafts, [req.params.uid], null, null, null, true);
+    }
+})
+
 
 module.exports = router;
