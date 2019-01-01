@@ -119,8 +119,15 @@ CREATE TABLE IF NOT EXISTS `bforum`.`mail` (
   `title` VARCHAR(200) NOT NULL,
   `content` TEXT NOT NULL,
   `time` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `sender` INT NOT NULL,
   PRIMARY KEY (`id`),
-  INDEX `mail_title_idx` (`title` ASC) INVISIBLE)
+  INDEX `mail_title_idx` (`title` ASC) INVISIBLE,
+  INDEX `fk_mail_user1_idx` (`sender` ASC) VISIBLE,
+  CONSTRAINT `fk_mail_user1`
+    FOREIGN KEY (`sender`)
+    REFERENCES `bforum`.`user` (`id`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE)
 ENGINE = InnoDB;
 
 
