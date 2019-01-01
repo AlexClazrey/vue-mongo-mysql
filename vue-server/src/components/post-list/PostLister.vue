@@ -1,55 +1,74 @@
 <template lang="pug">
-v-layout(row wrap)
-  // TODO add icons
-  v-flex.px-4(xs12 md9)
-    v-layout(row wrap)
-      v-flex.pr-3(xs12 sm6 md4)
-        v-btn.blue.darken-4.white--text(block flat)
-          v-icon(left) first_page
-          span first page
-      v-flex.pr-3(xs6 sm3 md4 lg3)
-        v-btn.grey.darken-2.white--text(block flat)
-          v-icon(left) chevron_left
-          span previous page
-      v-flex(xs6 sm3 md4 lg3)
-        v-btn.grey.darken-2.white--text(block flat) 
-          v-icon(left) chevron_right
-          span next page
-  v-flex.px-4(xs12 md3 align-center)
-    v-btn.pink.white--text(block flat)
-      v-icon(left) add_circle_outline
-      span add post
-  v-flex.mt-4.px-4(xs12 v-if="!loading" v-for="post in posts" :id="post.pid")
-    post-card(:post="post")
-  v-flex.mt-4.px-4(xs12 v-if="loading")
-    p.headline Loading Posts...
+v-card.py-3.amber.lighten-5(:class="{'px-2':$vuetify.breakpoint.smAndDown, 'px-4': $vuetify.breakpoint.mdAndUp}" flat)
+  post-pager(:page="page" :failed="failed" :empty="noNext" @page="updatePage" @refresh="fetchPosts")
+  v-layout(row wrap)
+    v-flex(xs12 v-if="!loading && !failed" v-for="post in posts" :key="post.pid")
+      post-card-container(:post="post")
+    v-flex(xs12 v-if="loading")
+      p.headline Loading Posts...
+    v-flex(xs12 v-if="failed")
+      p.headline Server Busy...
+    v-flex(xs12 v-if="empty")
+      p.headline No posts here.
+  post-pager(:page="page" :failed="failed" :empty="noNext" @page="updatePage" @refresh="fetchPosts")
 </template>
 
 <script>
-import PostCard from './PostCard.vue';
+import PostCardContainer from './PostCardContainer.vue';
+import PostPager from './PostPager.vue';
+import PostApi from '@/services/posts';
 
 export default {
   components: {
-    'post-card': PostCard,
+    'post-card-container': PostCardContainer,
+    'post-pager': PostPager,
   },
+  name: 'PostLister',
   data() {
     return {
       page: 1,
       posts: [],
       loading: true,
+      failed: false,
+      empty: false,
     }
   },
   computed: {
     bid() {
-      return this.$router.params && this.$router.params.bid || 0;
-    } 
+      return this.$route.params && this.$route.params.bid || 0;
+    },
+    noNext() {
+      return this.posts.length < this.$store.state.posts.postsCountOnOnePage;
+    }
+  },
+  watch: {
+    bid() {
+      this.fetchPosts();
+    },
+    page() {
+      this.fetchPosts();
+    }
   },
   mounted() {
-
+    this.fetchPosts();
   },
   methods: {
-    fetchPosts() {
-
+    async fetchPosts() {
+      this.loading = true;
+      this.failed = false;
+      this.empty = false;
+      var res = await PostApi.fetchPosts(this.bid, this.page);
+      this.loading = false;
+      if(res.data && res.data.success) {
+        this.posts = res.data.data;
+        if(this.posts.length === 0)
+          this.empty = true;
+      } else {
+        this.failed = true;
+      }
+    },
+    updatePage(page) {
+      this.page = page;
     }
   }
 }

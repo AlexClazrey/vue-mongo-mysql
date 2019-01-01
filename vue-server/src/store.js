@@ -45,6 +45,9 @@ const initState = {
     info: null,
     privileges: [],
   },
+  posts: {
+    postsCountOnOnePage: 20,
+  },
   boards: [],
   adminPanel: {
     requests: 5,

@@ -1,5 +1,5 @@
 <template>
-  <v-app class="white">
+  <v-app>
     <v-toolbar flat class="amber lighten-4">
       <header class="main-header">
         <v-toolbar-title class="headline text-uppercase">

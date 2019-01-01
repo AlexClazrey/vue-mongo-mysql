@@ -2,8 +2,10 @@ import api from '@/services/api'
 
 var ax = api('/posts');
 export default {
-	fetchPosts(params) {
-		return ax.get('?bid=' + params);
+	fetchPosts(bid, page) {
+		var query = bid ? ('?bid=' + bid + '&') : '?';
+		query += page ? ('page=' + page) : '';
+		return ax.get(query);
 	},
 	addPost(params) {
 		return ax.post('/draft', params);
