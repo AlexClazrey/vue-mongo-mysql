@@ -101,7 +101,7 @@ async function getList(bid, page) {
 async function getListAndReplies(bid, page) {
 	var postList = await getList(bid, page);
 	var replyPromises = postList.map(post => {
-		return getReplies(post.pid, 5);
+		return getReplies(post.pid, 0, 5);
 	});
 	var values = await Promise.all(replyPromises);
 	values.forEach((replies, index) => {
@@ -125,13 +125,12 @@ async function getPost(pid) {
 	}
 }
 
-async function getReplies(pid, count) {
+async function getReplies(pid, offset, count) {
 	var con;
 	try {
 		con = await pool.aGet();
-		var cmd = 'select * from v_post_reply_list where p_pid = '
-			+ con.escape(pid)
-			+ ' limit ' + con.escape(count) + '; ';
+		var cmd = 
+			`select * from v_post_reply_list where p_pid = ${con.escape(pid)} limit ${con.escape(offset)}, ${con.escape(count)};`;
 		var res = await pool.aQuery(con, cmd);
 		return res;
 	} catch (err) {

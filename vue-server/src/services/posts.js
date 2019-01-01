@@ -7,14 +7,17 @@ export default {
 		query += page ? ('page=' + page) : '';
 		return ax.get(query);
 	},
-	addPost(params) {
+	saveDraft(params) {
 		return ax.post('/draft', params);
 	},
-	getPost(params) {
-		return ax.get('/' + params.id);
+	commitPost(params) {
+		return ax.post('/', params);
 	},
-	deletePost(params) {
-		return ax.delete('/' + params.id);
+	getPost(pid) {
+		return ax.get('/' + pid);
+	},
+	deletePost(pid) {
+		return ax.delete('/' + pid);
 	}
 };
 

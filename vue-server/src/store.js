@@ -7,9 +7,11 @@ import router from './router';
 import userApi from './services/user'
 import boardApi from './services/boards'
 import groupApi from './services/group';
+import fileApi from './services/file';
 
 Vue.use(Vuex)
 
+// 各个组件通过watch store里面signals的信号量来得知操作成功与否
 async function simpleApiCall(context, mutationName, errMsg, apiAsyncFunction, ...apiArgs) {
   var data = await apiAsyncFunction(...apiArgs);
   if(data.data) {
@@ -18,10 +20,10 @@ async function simpleApiCall(context, mutationName, errMsg, apiAsyncFunction, ..
         context.commit(mutationName, data.data.data);
     } else {
       if(data.data.badAuth) {
-        router.push({name: 'login'});
         context.dispatch('removeUserCookies');
+        context.commit('setBadAuth', true);
       } else if (data.data.badPrivilege) {
-        alert('你没有这个操作的权限');
+        context.commit('setBadPrivilege', true);
       } else if(errMsg) {
         alert(errMsg);
       }
@@ -41,12 +43,16 @@ const initState = {
       { name: 'Logout', click: (context) => { context.dispatch('userLogout'); }, visible: (context) => context.getters.uid },
     ],
   },
+  signals: {
+    badAuth: false,
+    badPrivilege: false,
+  },
   user: {
     info: null,
     privileges: [],
   },
   files: {
-    mapping: {},
+    mapping: [],
   },
   posts: {
     postsCountOnOnePage: 20,
@@ -79,6 +85,8 @@ export default new Vuex.Store({
     boards: state => state.boards,
     adminPanel: state => state.adminPanel,
     fileMap: state => state.files.mapping,
+    badAuth: state => state.signals.badAuth,
+    badPrivilege: state => state.signals.badPrivilege,
   },
   mutations: {
     setUserInfo(state, userInfo) {
@@ -104,6 +112,15 @@ export default new Vuex.Store({
     },
     setGroupToPrivileges(state, data) {
       state.adminPanel.groupToPrivileges = data.sort((a,b) => (a.gid - b.gid));
+    },
+    setBadAuth(state, badAuth) {
+      state.signals.badAuth = badAuth;
+    },
+    setBadPrivilege(state, badPrivilege) {
+      state.signals.badPrivilege = badPrivilege;
+    },
+    setFileMapping(state, data) {
+      state.files.mapping[data.id] = data;
     },
     addAdminPanelReplyCounter(state) {
       state.adminPanel.loaded++;
@@ -167,8 +184,9 @@ export default new Vuex.Store({
     fetchUserPrivileges: (context, uid) => {
       simpleApiCall(context, 'setUserPrivileges', '获取用户权限信息出错。', userApi.getPrivileges, uid);
     },
+    // TODO file function untested
     fetchFileAddress: (context, fileId) => {
-      // TODO 
+      simpleApiCall(context, 'setFileMapping', '获取文件出错', fileApi.getAddress, fileId)
     },
     refreshBoards: (context) => {
       simpleApiCall(context, 'setBoards', '获取板块列表出错。', boardApi.getBoards);

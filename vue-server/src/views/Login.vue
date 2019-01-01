@@ -51,6 +51,7 @@ export default {
                 if(res.data && res.data.success){
                     this.$store.dispatch('userLogin', res.data);
                     window.alert("success");
+                    this.$router.go(-1);
                 } else {
                     window.alert("Your username or password is wrong");
                 }

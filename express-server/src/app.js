@@ -13,6 +13,7 @@ const boardRouter = require('./router/board-router');
 const postRouter = require('./router/post-router');
 const userRouter = require('./router/user-router');
 const groupRouter = require('./router/group-router');
+const fileRouter = require('./router/file-router');
 
 // set up express server
 const app = express();
@@ -28,6 +29,7 @@ app.use('/user', userRouter);
 app.use('/posts', postRouter);
 app.use('/boards', boardRouter);
 app.use('/group', groupRouter);
+app.use('/file', fileRouter);
 
 // listen
 app.listen(process.env.PORT || 8081);

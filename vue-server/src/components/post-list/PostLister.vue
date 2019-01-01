@@ -10,7 +10,7 @@ v-card.py-3.amber.lighten-5(:class="{'px-2':$vuetify.breakpoint.smAndDown, 'px-4
       p.headline Server Busy...
     v-flex(xs12 v-if="empty")
       p.headline No posts here.
-  post-pager(:page="page" :failed="failed" :empty="noNext" @page="updatePage" @refresh="fetchPosts")
+  post-pager(:page="page" :failed="failed" :empty="noNext" :bid="bid" @page="updatePage" @refresh="fetchPosts")
 </template>
 
 <script>

@@ -23,7 +23,7 @@ v-card.white.lighten-5.py-1.px-3()
       v-card-actions
         v-btn(flat color="red" small)
           v-icon menu
-        v-btn(flat color="blue" small v-if="!isReply" router :to="{name:'read-post', params:{ pid: post.pid }}")
+        v-btn(flat color="blue" small router :to="{name:'read-post', params:{ pid: parentId }}")
           v-icon arrow_forward
         v-btn(flat color="teal" small v-if="!isReply" router :to="{name:'reply-post', params:{ rpid: post.pid }}")
           v-icon reply
@@ -51,6 +51,12 @@ export default {
     },
     contentPreview() {
       return this.post.content.substr(0, 300);
+    },
+    postId() {
+      return this.isReply ? this.post.c_pid : this.post.pid;
+    },
+    parentId() {
+      return this.isReply ? this.post.p_pid : this.post.pid;
     }
   }
 }

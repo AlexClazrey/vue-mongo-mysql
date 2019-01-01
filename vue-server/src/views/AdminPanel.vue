@@ -131,7 +131,7 @@ export default {
         'admin-panel-table': AdminPanelTable,
     },
     computed: {
-        ...mapGetters(['adminPanel', 'boards']),
+        ...mapGetters(['adminPanel', 'boards', 'badAuth', 'badPrivilege']),
         loading() {
             return this.adminPanel.loaded < this.adminPanel.requests;
         },
@@ -168,6 +168,17 @@ export default {
                     permit: entry.permit ? 'Yes' : 'No',
                 }
             });
+        }
+    },
+    watch: {
+        badAuth(val) {
+           if(val)
+               this.$router.replace({name: 'login'});
+        },
+        badPrivilege(val) {
+            if(val) {
+                this.$router.go(-1);
+            }
         }
     },
     mounted() {

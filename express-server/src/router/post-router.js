@@ -21,6 +21,7 @@ router.get('/', async (req, res) => {
 });
 
 // save draft
+// TODO 现在每存一次都会刷新一次post-board对应关系
 router.post('/draft', async (req, res) => {
     try {
         // if has problem, return value will be true
@@ -62,6 +63,7 @@ router.post('/draft', async (req, res) => {
 });
 
 // commit post
+// TODO 这里有一个非常发疯的漏洞，一个人写的帖子可以被另外一个人提交
 router.post('/', async (req, res) => {
     try {
         // TODO 这里也没有区分是不是有回复权限。
@@ -96,9 +98,10 @@ router.get('/:pid', async(req, res) => {
 })
 
 // Get post's recent replies list
+// reply-list/<post-id>?page=<page>
 router.get('/reply-list/:pid', async(req, res) => {
     try {
-        var replies = await post.getReplies(req.params.pid, 5);
+        var replies = await post.getReplies(req.params.pid, (page-1)*20, 20);
         res.send({
             success: true,
             data: replies
@@ -108,7 +111,7 @@ router.get('/reply-list/:pid', async(req, res) => {
     }
 });
 
-// delete draft
+// TODO delete draft
 router.delete('/draft/:pid', async (req, res) => {
     try {
         
@@ -117,7 +120,7 @@ router.delete('/draft/:pid', async (req, res) => {
     }
 });
 
-// user delete post
+// TODO user delete post
 router.delete('/:pid', async (req, res) => {
     try {
 
@@ -126,6 +129,7 @@ router.delete('/:pid', async (req, res) => {
     }
 });
 
+// TODO admin delete post
 router.delete('/admin/:pid', async (req, res) => {
     try {
 
