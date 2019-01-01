@@ -1,6 +1,6 @@
 <template lang="pug">
 v-card.py-3.amber.lighten-5(:class="{'px-2':$vuetify.breakpoint.smAndDown, 'px-4': $vuetify.breakpoint.mdAndUp}" flat)
-  post-pager(:page="page" :failed="failed" :empty="noNext" @page="updatePage" @refresh="fetchPosts")
+  post-pager(:page="page" :failed="failed" :empty="noNext" :bid="bid" @page="updatePage" @refresh="fetchPosts")
   v-layout(row wrap)
     v-flex(xs12 v-if="!loading && !failed" v-for="post in posts" :key="post.pid")
       post-card-container(:post="post")
@@ -35,7 +35,7 @@ export default {
   },
   computed: {
     bid() {
-      return this.$route.params && this.$route.params.bid || 0;
+      return this.$route.params && parseInt(this.$route.params.bid) || 0;
     },
     noNext() {
       return this.posts.length < this.$store.state.posts.postsCountOnOnePage;

@@ -64,6 +64,7 @@ router.post('/draft', async (req, res) => {
 // commit post
 router.post('/', async (req, res) => {
     try {
+        // TODO 这里也没有区分是不是有回复权限。
         // if has problem, this will be true
         if(await sec.checkPostReq(req, res, 'commit post'))
             return;

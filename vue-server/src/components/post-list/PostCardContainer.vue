@@ -1,5 +1,5 @@
 <template lang="pug">
-v-card.pa-4(flat)
+v-card.pa-4(flat tile)
   post-card(:post="post" :isReply="false" :isLastReply="false")
   v-card.mt-2(flat)
     v-layout(row)
@@ -11,6 +11,7 @@ v-card.pa-4(flat)
           v-btn(large icon flat color="yellow darken-3")
             v-icon(large) arrow_downward
       v-flex(xs10 md11)
+        // TODO add "and xxx more posts..." info
         post-card.mt-1(
           v-for="reply, index in post.replies", :key="reply.c_pid",
           :post="reply", :isReply="true", :isLastReply="index < post.replies.length - 1")

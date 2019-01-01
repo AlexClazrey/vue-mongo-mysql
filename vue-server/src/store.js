@@ -45,6 +45,9 @@ const initState = {
     info: null,
     privileges: [],
   },
+  files: {
+    mapping: {},
+  },
   posts: {
     postsCountOnOnePage: 20,
   },
@@ -75,6 +78,7 @@ export default new Vuex.Store({
     privilegeNames: state => state.user.privileges.map(pri => pri.priName),
     boards: state => state.boards,
     adminPanel: state => state.adminPanel,
+    fileMap: state => state.files.mapping,
   },
   mutations: {
     setUserInfo(state, userInfo) {
@@ -162,6 +166,9 @@ export default new Vuex.Store({
     },
     fetchUserPrivileges: (context, uid) => {
       simpleApiCall(context, 'setUserPrivileges', '获取用户权限信息出错。', userApi.getPrivileges, uid);
+    },
+    fetchFileAddress: (context, fileId) => {
+      // TODO 
     },
     refreshBoards: (context) => {
       simpleApiCall(context, 'setBoards', '获取板块列表出错。', boardApi.getBoards);
