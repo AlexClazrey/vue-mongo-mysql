@@ -15,6 +15,9 @@ import UserPage from '@/views/UserPage.vue'
 // components
 import PostLister from '@/components/post-list/PostLister.vue'
 
+//temp
+import UserInfo from '@/components/user-information/UserInfo.vue'
+
 Vue.use(Router)
 
 export default new Router({
@@ -83,6 +86,12 @@ export default new Router({
       path: '/user/:uid',
       name: 'user-page',
       component: UserPage,
+    },
+    //temp
+    {
+      path: '/userinfo',
+      name: 'user-info',
+      component: UserInfo
     }
   ]
 })
