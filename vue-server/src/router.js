@@ -17,6 +17,7 @@ import PostLister from '@/components/post-list/PostLister.vue'
 
 //temp
 import UserInfo from '@/components/user-information/UserInfo.vue'
+import ModifyUser from '@/components/ModifyUser.vue'
 
 Vue.use(Router)
 
@@ -92,6 +93,11 @@ export default new Router({
       path: '/userinfo',
       name: 'user-info',
       component: UserInfo
+    },
+    {
+      path: '/modifyUser',
+      name: 'user-modify',
+      component: ModifyUser
     }
   ]
 })
