@@ -1,7 +1,7 @@
 <template lang="pug">
 v-card(flat style="max-width: 1300px; margin: 0 auto;")
-    v-container
-        user-info()
+    v-container.py-0
+        user-info(:uid="$route.params.uid")
 </template>
 
 <script>

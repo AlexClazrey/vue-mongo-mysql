@@ -9,7 +9,8 @@ v-card.white.lighten-5.py-1.px-3()
         v-avatar(tile :size="isReply ? '36' : '48'" style="display: inline-block")
           img(v-if="post.protrait")
           v-icon(v-if="!post.protrait" :large="!isReply") person
-        p.ml-1.mt-0.mb-1(:style="{'font-size': isReply ? '16px' : '20px', display: 'inline-block'}") {{ post.nickname }}
+        v-card.transparent(flat router :to="{name: 'user-page', params: {uid: post.uid}}")
+          p.ml-1.mt-0.mb-2(:style="{'font-size': isReply ? '16px' : '20px', display: 'inline-block'}") {{ post.nickname }}
     v-flex(xs8)
       v-card-text.my-0.py-0
         p.my-0.caption {{ new Date(post.commit_time).toLocaleString() }}
