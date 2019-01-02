@@ -4,7 +4,7 @@
       <header class="main-header">
         <v-toolbar-title class="headline text-uppercase">
           <span>BeForum</span>
-          <span class="font-weight-light"> BETA</span>
+          <span class="font-weight-light"> ALPHA</span>
         </v-toolbar-title>
       </header>
       <v-spacer></v-spacer>

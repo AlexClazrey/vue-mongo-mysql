@@ -15,6 +15,7 @@ v-card.transparent(flat style="max-width: 960px; margin: 0 auto;")
 <script>
 import PostEditor from '@/components/post-edit/PostEditor.vue';
 import postApi from '@/services/posts';
+import apiUtil from '@/services/util';
 import {mapGetters} from 'vuex';
 import $ from 'jquery';
 require('jquery.cookie');
@@ -72,12 +73,14 @@ export default {
   },
   watch: {
     badAuth(val) {
-      if(val)
+      if(val) {
         alert('登录信息失效，无法保存帖子的内容，请手动复制内容到其他程序之后重新登录。');
+      }
     },
     badPrivilege(val) {
-      if(val)
+      if(val) {
         alert('你没有权限在此编辑内容，内容将不会保存。');
+      }
     }
   },
   methods: {
@@ -128,9 +131,10 @@ export default {
       } 
       // submit save request
       var res = await postApi.saveDraft(post);
+      res = apiUtil.resAuthCheck(res, this);
       this.loading = false;
-      if(res.data && res.data.success) {
-        this.newPid = res.data.pid;
+      if(res) {
+        this.newPid = res.pid;
         return this.newPid;
       } else {
         alert('保存失败，请重试');
@@ -148,8 +152,9 @@ export default {
         uid: this.$store.getters.uid,
         pid: pid,
       });
+      res = apiUtil.resAuthCheck(res, this);
       this.loading = false;
-      if(res.data && res.data.success) {
+      if(res) {
         alert('提交成功');
         this.$router.go(-1);
       }
