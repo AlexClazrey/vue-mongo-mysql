@@ -96,7 +96,8 @@ router.get('/:pid', async(req, res) => {
     } catch (err) {
         res.send({success: false});
     }
-})
+});
+
 
 // Get post replies list
 // reply-list/<post-id>?page=<page>

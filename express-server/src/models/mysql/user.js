@@ -165,7 +165,7 @@ async function getUserPosts(uid) {
 	var con;
 	try {
 		con = await pool.aGet();
-		var cmd = 'select * from `v_user_post` where uid=' + con.escape(uid) + ';';
+		var cmd = 'select * from `v_user_post` where uid=' + uid + ';';
 		var res = await pool.aQuery(con, cmd);
 		return res;
 	} catch (err) {
