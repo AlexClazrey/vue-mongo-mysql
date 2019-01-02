@@ -96,7 +96,7 @@ export default {
     async fetchPost(pid) {
       if(pid) {
         this.loading = true;
-        var res = await postApi.getPost(pid);
+        var res = await postApi.getPostContent(pid);
         this.loading = false;
         if(res.data && res.data.success) {
           this.title = res.data.data.title;

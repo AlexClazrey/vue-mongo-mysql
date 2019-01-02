@@ -17,7 +17,6 @@ v-card.pa-4(flat tile)
           v-btn(large icon flat color="yellow darken-3")
             v-icon(large) arrow_downward
       v-flex(xs10 md11 v-if="hasReply")
-        // TODO add "and xxx more posts..." info
         post-card.mt-1(
           v-for="reply, index in post.replies", :key="reply.c_pid",
           :post="reply", :isReply="true", :isLastReply="index < post.replies.length - 1",

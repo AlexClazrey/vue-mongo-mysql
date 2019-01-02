@@ -17,6 +17,12 @@ export default {
             email
         });
     },
+    userChangePass(oldPass, newPass) {
+        return ax.post('/change-pass', {
+            oldPass,
+            newPass,
+        });
+    },
     userLogout() {
         return ax.delete('/');
     },
@@ -28,5 +34,11 @@ export default {
     },
     getUserPosts(uid){
         return ax.get('/' + uid + '/posts');
-    }
+    },
+    getUserDrafts(uid) {
+        return ax.get('/' + uid + '/drafts');
+    },
+    getUserFavorites(uid) {
+        return ax.get('/' + uid + '/favorites');
+    },
 }

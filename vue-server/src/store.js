@@ -40,9 +40,10 @@ async function simpleApiCall(context, mutationName, errMsg, apiAsyncFunction, ..
 const initState = {
   nav: {
     list: [
-      { name: 'Home', to: '/' },
+      // { name: 'Home', to: '/' },
       { name: 'Posts', to: '/posts' },
       { name: 'Login', to: '/login', visible: (context) => !context.getters.uid },
+      { name: 'My Space', to: '/my-space', visible: (context) => context.getters.uid },
       { name: 'Admin Panel', to: '/admin-panel', visible: (context) => context.getters.privilegeNames.includes('user admin') },
       { name: 'Logout', click: (context) => { context.dispatch('userLogout'); }, visible: (context) => context.getters.uid },
     ],

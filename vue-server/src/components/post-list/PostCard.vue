@@ -21,8 +21,14 @@ v-card.white.lighten-5.py-1.px-3()
         p {{ contentPreview }}
     v-flex(xs10)
       v-card-actions
-        v-btn(flat color="red" small)
-          v-icon menu
+        v-menu(offset-y)
+          v-btn(flat color="red" small slot="activator" :loading="menuLoading")
+            v-icon menu
+          v-list.red
+            v-list-tile(v-for="(item, index) in menuItems" :key="index", @click="item.callback(postId)")
+              v-list-tile-action
+                v-icon.white--text(style="margin: 0 auto;") {{ item.icon }}
+              v-list-tile-title(v-if='item.title') {{ item.title }}
         v-btn(flat color="blue" small v-if="!readingPost" router :to="{name:'read-post', params:{ pid: parentId }}")
           v-icon arrow_forward
         v-btn(flat color="teal" small v-if="!isReply" router :to="{name:'reply-post', params:{ rpid: post.pid }}")
@@ -34,6 +40,8 @@ v-card.white.lighten-5.py-1.px-3()
 </template>
 
 <script>
+import postApi from '@/services/posts';
+
 export default {
   name: "PostCard",
   props: {
@@ -44,6 +52,14 @@ export default {
       type: Boolean,
       default: false,
     },
+  },
+  data() {
+    return {
+      menuItems: [
+        {title: '', icon:'favorite', callback: this.addToFav }
+      ],
+      menuLoading: false,
+    }
   },
   computed: {
     addon() {
@@ -61,6 +77,17 @@ export default {
     },
     parentId() {
       return this.isReply ? this.post.p_pid : this.post.pid;
+    }
+  },
+  methods: {
+    async addToFav(pid) {
+      if(!this.$store.getters.uid) {
+        alert('You need to login first.');
+        return;
+      }
+      this.menuLoading = true;
+      postApi.addFav(pid, this.$store.getters.uid);
+      this.menuLoading = false;
     }
   }
 }

@@ -43,6 +43,10 @@ router.post('/register', (request, response) => {
     });
 });
 
+router.post('/change-pass', (req, res) => {
+    routerUtil.modelCall(req, res, user.changePass, [req.cookies.uid, req.body.oldPass, req.body.newPass], null, null, null, true);
+});
+
 // get private info
 // TODO this function has no security protection
 router.get('/:uid', async (req, res) => {
@@ -92,6 +96,17 @@ router.get('/:uid/drafts', async(req, res) => {
         })
     } else {
         routerUtil.modelCall(req, res, user.getUserDrafts, [req.params.uid], null, null, null, true);
+    }
+})
+
+router.get('/:uid/favorites', async(req, res) => {
+    if(req.params.uid != req.cookies.uid) {
+        res.send({
+            badAuth: true,
+            success: false,
+        })
+    } else {
+        routerUtil.modelCall(req, res, user.getUserFav, [req.params.uid], null, null, null, true);
     }
 })
 

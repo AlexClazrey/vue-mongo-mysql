@@ -43,6 +43,14 @@ export default {
       return this.$store.getters.boards;
     }
   },
+  watch: {
+    title() {
+      this.titleData = this.title;
+    },
+    content() {
+      this.contentData = this.content;
+    },
+  },
   methods: {
     save() {
       this.$emit('save', this.post)

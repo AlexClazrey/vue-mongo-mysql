@@ -137,8 +137,8 @@ async function getListAndReplies(bid, page) {
 	return postList;
 }
 
-// post details
-async function getPost(pid) {
+// post infos
+async function getCommitedPost(pid) {
 	var con;
 	try {
 		con = await pool.aGet();
@@ -146,7 +146,23 @@ async function getPost(pid) {
 		var res = await pool.aQuery(con, cmd);
 		return res[0];
 	} catch (err) {
-		console.error('[Error][MySQL] get post detail failed', cmd);
+		console.error('[Error][MySQL] get commited post detail failed', cmd);
+		throw err;
+	} finally {
+		pool.release(con);
+	}
+}
+
+// post content
+async function getPostContent(pid) {
+	var con;
+	try {
+		con = await pool.aGet();
+		var cmd = 'select * from v_post_content where pid=' + con.escape(pid) + ';';
+		var res = await pool.aQuery(con, cmd);
+		return res[0];
+	} catch (err) {
+		console.error('[Error][MySQL] get post content failed', cmd);
 		throw err;
 	} finally {
 		pool.release(con);
@@ -186,6 +202,34 @@ async function getPostBoard(pid) {
 	}
 }
 
+async function addFavPost(pid, uid) {
+	var con;
+	try {
+		con = await pool.aGet();
+		var cmd = 'call add_fav_post(' + con.escape(pid) + ',' + con.escape(uid) + ');';
+		await pool.aQuery(con, cmd);
+	} catch (err) {
+		console.error('[Error][MySQL] add fav post failed', cmd);
+		throw err;
+	} finally {
+		pool.release(con);
+	}
+}
+
+async function removeFavPost(pid, uid) {
+	var con;
+	try {
+		con = await pool.aGet();
+		var cmd = 'call delete_fav_post(' + con.escape(pid) + ',' + con.escape(uid) + ');';
+		await pool.aQuery(con, cmd);
+	} catch (err) {
+		console.error('[Error][MySQL] remove fav post failed', cmd);
+		throw err;
+	} finally {
+		pool.release(con);
+	}
+}
+
 module.exports = {
 	addPostToBoard,
 	addPostToReply,
@@ -193,8 +237,11 @@ module.exports = {
 	commitPost,
 	getList,
 	getListAndReplies,
-	getPost,
+	getCommitedPost,
+	getPostContent,
 	getReplies,
 	getPostBoard,
-	getRepliesCount
+	getRepliesCount,
+	addFavPost,
+	removeFavPost
 };

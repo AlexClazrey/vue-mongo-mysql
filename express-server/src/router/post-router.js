@@ -1,6 +1,7 @@
 const express = require('express');
 const post = require('../models/mysql/post.js');
 const sec = require('../models/mysql/security');
+const routerUtil = require('./util');
 
 const router = express.Router();
 
@@ -36,19 +37,21 @@ router.post('/draft', async (req, res) => {
         var newPid = await post.saveDraft(req.body.uid, req.body.pid, req.body.title, req.body.content)
         if(newPid > 0) {
             // 内容创建成功
-            if(req.body.isReply) {
-                // 添加到回复
-                var success = await post.addPostToReply(newPid, req.body.pPid, true);
-                if(success == 0) {
-                    res.send({
-                        success: false,
-                        msg: '你不能回复一个回复帖',
-                        pid: newPid
-                    });
+            if(req.body.isReply !== undefined) {
+                if(req.body.isReply) {
+                    // 添加到回复
+                    var success = await post.addPostToReply(newPid, req.body.pPid, true);
+                    if(success == 0) {
+                        res.send({
+                            success: false,
+                            msg: '你不能回复一个回复帖',
+                            pid: newPid
+                        });
+                    }
+                } else {
+                    // 添加到板块
+                    await post.addPostToBoard(newPid, req.body.bid, true);
                 }
-            } else {
-                // 添加到板块
-                await post.addPostToBoard(newPid, req.body.bid, true);
             }
             res.send({
                 success: true,
@@ -81,7 +84,7 @@ router.post('/', async (req, res) => {
 // get post details
 router.get('/:pid', async(req, res) => {
     try {
-        var postData = await post.getPost(req.params.pid)
+        var postData = await post.getCommitedPost(req.params.pid)
         if(postData.length == 0) {
             res.send({
                 success: false,
@@ -98,6 +101,24 @@ router.get('/:pid', async(req, res) => {
     }
 });
 
+router.get('/content/:pid', async(req, res) => {
+    try {
+        var postData = await post.getPostContent(req.params.pid);
+        if(postData.length == 0) {
+            res.send({
+                success: false,
+                msg: 'No such post'
+            })
+        } else {
+            res.send({
+                success: true,
+                data: postData
+            });
+        }
+    } catch (err) {
+        res.send({success: false});
+    }
+});
 
 // Get post replies list
 // reply-list/<post-id>?page=<page>
@@ -114,6 +135,14 @@ router.get('/reply-list/:pid', async(req, res) => {
         console.error('[Error][Router] get post reply list error');
     }
 });
+
+router.post('/fav/:pid', async(req, res)=> {
+    routerUtil.modelCall(req, res, post.addFavPost, [req.cookies.uid, req.params.pid], null, null, null, true);
+})
+
+router.delete('/fav/:pid', async(req, res)=> {
+    routerUtil.modelCall(req, res, post.removeFavPost, [req.cookies.uid, req.params.pid], null, null, null, true);
+})
 
 // TODO delete draft
 router.delete('/draft/:pid', async (req, res) => {

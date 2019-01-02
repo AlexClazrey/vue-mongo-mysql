@@ -16,11 +16,20 @@ export default {
 	getPost(pid) {
 		return ax.get('/' + pid);
 	},
+	getPostContent(pid) {
+		return ax.get('/content/' + pid);
+	},
 	getReplies(pid, page) {
 		return ax.get('/reply-list/' + pid + '?page=' + page);
 	},
 	deletePost(pid) {
 		return ax.delete('/' + pid);
-	}
+	},
+	addFav(pid) {
+		return ax.post('/fav/' + pid);
+	},
+	removeFav(pid) {
+		return ax.delete('/fav/' + pid);
+	},
 };
 
