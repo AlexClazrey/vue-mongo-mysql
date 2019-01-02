@@ -11,7 +11,7 @@
         v-layout.justify-center(raw wrap)
             v-flex(xs12 md9)
                 v-card(v-if="posts.length !== 0" v-for="post in posts" :key="post.pid")
-                    post-card-container(v-if="!loading && !failed" :post="post" readingPost)
+                    post-card-container(v-if="!loading" :post="post" readingPost)
 </template>
 
 <script>
@@ -29,8 +29,6 @@ export default {
         return{
             page: 1,
             postloading: true,
-            repliesLoading: true,
-            repliesFailed: true,
             portrait: '',
             IDdata: this.ID || null,
             nickname: '',
@@ -45,8 +43,7 @@ export default {
         this.getPostsByid(2);
     },
     computed:{
-        loading(){ return this.postloading || this.repliesLoading; },
-        failed(){ return this.repliesFailed}
+        loading(){ return this.postloading }
     },
     watch:{
         page(){
@@ -60,30 +57,15 @@ export default {
                 const response = await UserApi.getUserPosts(uid);
                 if(response.data.success){
                     this.posts = response.data.data;
-                    this.postloading = false;
                     for(var i=0; i < this.posts.length;i++){
-                        this.fetchReplies(this.posts[i].pid, this.posts[i], i);
+                        this.posts[i].replies = [];
                     }
+                    this.postloading = false;
                 } else{
                     window.alert('get user posts failed');
                 }
             }
-        },
-        //add tag to make sure fetch all replies at first then make post-card-container
-        async fetchReplies(pid, post, tag) {
-            this.repliesLoading = true;
-            var res = await PostApi.getReplies(pid, this.page);
-            this.repliesLoading = false;
-            if(res.data.success) {
-                post.replies = res.data.data;
-                if(tag == this.posts.length - 1){
-                    this.repliesFailed = false;
-                }
-            } else {
-                this.repliesFailed = true;
-                window.alert('获取回复数据失败');
-            }
-        },
+        }
     }
 }
 </script>
