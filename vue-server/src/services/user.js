@@ -25,5 +25,8 @@ export default {
     },
     getPrivileges(uid) {
         return ax.get('/' + uid + '/privileges');
+    },
+    getUserPosts(uid){
+        return ax.get('/' + uid + '/posts');
     }
 }

@@ -11,7 +11,7 @@ import fileApi from './services/file';
 
 Vue.use(Vuex)
 
-// 各个组件通过watch store里面signals的信号量来得知操作成功与否
+// 各个组件通过watch store里面signals的信号量来得知操作成功与否，相当于提供了一个异常处理系统
 async function simpleApiCall(context, mutationName, errMsg, apiAsyncFunction, ...apiArgs) {
   var data = await apiAsyncFunction(...apiArgs);
   if(data.data) {
@@ -25,7 +25,7 @@ async function simpleApiCall(context, mutationName, errMsg, apiAsyncFunction, ..
           noRequest: true,
           noRedirect: true,
         });
-        context.commit('setBadAuth', true);
+        context.dispatch('setBadAuthASec');
       } else if (data.data.badPrivilege) {
         context.commit('setBadPrivilege', true);
       } else if(errMsg) {
@@ -181,6 +181,14 @@ export default new Vuex.Store({
     removeUserCookies: () => {
       $.removeCookie('uid', cookiesOption); // TODO 记住我这个选项到底应该持续多少天还需要说明，我这里先给了七天，实际上在SQL这边也需要更多的接口。
       $.removeCookie('user', cookiesOption); // TODO 在注册方面还有检查是否被占用的功能还没有实现。
+    },
+    setBadAuthASec(context) {
+      context.commit('setBadAuth', true);
+      setTimeout(()=> {context.commit('setBadAuth', false)}, 1000);
+    },
+    setBadPrivilege(context) {
+      context.commit('setBadPrivilege', true);
+      setTimeout(()=> {context.commit('setBadPrivilege', false)}, 1000);
     },
     fetchUser: (context) => {
       const uid = $.cookie('uid');

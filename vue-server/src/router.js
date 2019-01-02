@@ -17,31 +17,44 @@ import PostLister from '@/components/post-list/PostLister.vue'
 
 //temp
 import UserInfo from '@/components/user-information/UserInfo.vue'
+import ModifyUser from '@/components/ModifyUser.vue'
 
 Vue.use(Router)
 
-export default new Router({
+const router = new Router({
   mode: 'history',
   base: process.env.BASE_URL,
   routes: [
     {
       path: '/login',
       name: 'login',
-      component: Login
+      component: Login,
+      meta: {
+        title: 'BeForum Login'
+      }
     },
     {
       path: '/register',
       name: 'register',
-      component: Register
+      component: Register,
+      meta: {
+        title: 'BeForum Register'
+      }
     },
     {
       path: '/',
       name: 'home',
-      component: Home
+      component: Home,
+      meta: {
+        title: 'BeForum Home'
+      }
     },
     {
       path: '/posts',
       component: Posts,
+      meta: {
+        title: 'BeForum Posts'
+      },
       children: [
         { path: '', name: 'all-posts', component: PostLister },
         { path: ':bid', name: 'board-posts', component: PostLister },
@@ -89,9 +102,23 @@ export default new Router({
     },
     //temp
     {
-      path: '/userinfo',
+      path: '/user-info',
       name: 'user-info',
       component: UserInfo
+    },
+    {
+      path: '/modifyUser',
+      name: 'user-modify',
+      component: ModifyUser
     }
   ]
 })
+
+router.beforeEach((to, from, next) => {
+  if(to.meta && to.meta.title) {
+    document.title = to.meta.title;
+  }
+  next();
+})
+
+export default router;

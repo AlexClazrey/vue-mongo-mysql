@@ -137,6 +137,7 @@ async function getListAndReplies(bid, page) {
 	return postList;
 }
 
+// post details
 async function getPost(pid) {
 	var con;
 	try {
@@ -195,5 +196,5 @@ module.exports = {
 	getPost,
 	getReplies,
 	getPostBoard,
-	getRepliesCount,
+	getRepliesCount
 };

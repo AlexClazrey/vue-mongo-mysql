@@ -172,8 +172,9 @@ export default {
     },
     watch: {
         badAuth(val) {
-           if(val)
+           if(val) {
                this.$router.replace({name: 'login'});
+           }
         },
         badPrivilege(val) {
             if(val) {

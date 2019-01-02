@@ -17,9 +17,9 @@ const pool = mysql.createPool({
 // You should not put anything after resolve in Promise to avoid mysterious bug.
 
 function getConnectionPromise() {
-	return new Promise(function(res,rej) {
-		pool.getConnection(function(err,connection) {
-			if(err) {
+	return new Promise(function (res, rej) {
+		pool.getConnection(function (err, connection) {
+			if (err) {
 				rej(err);
 			} else {
 				// you can set triggers here
@@ -57,7 +57,7 @@ async function aGetConnectionWithLog() {
 }
 
 function releaseConnectionWithLog(connection) {
-	if(connection === undefined) {
+	if (connection === undefined) {
 		console.log("[Info][MySQL] release an undefined connection");
 		return;
 	}
@@ -69,7 +69,7 @@ function sleep(ms) {
 }
 
 async function aQueryWithLog(connection, ...queryArgs) {
-	if(connection === undefined) {
+	if (connection === undefined) {
 		console.error("[Error][MySQL] query via an undefined connection");
 		throw new Error("[MySQL] query via an undefined connection");
 	}
@@ -79,18 +79,20 @@ async function aQueryWithLog(connection, ...queryArgs) {
 		return result;
 	} catch (err) {
 		// if deadlock, retry it for 3 times, interval 100ms.
-		if(err.message.includes('ER_LOCK_DEADLOCK')) {
+		if (err.message.includes('ER_LOCK_DEADLOCK')) {
 			var retryResult;
-			for(var retryCount = 0; retryCount < 3; retryCount++) {
-				await sleep(100);
+			for (var retryCount = 0; retryCount < 3; retryCount++) {
+				// 随机沉睡50-150ms
+				var period = Math.floor(Math.random() * (150 - 50) + 50);
+				await sleep(period);
 				console.log('[Warn][MySQL] Deadlock >> retrying #' + retryCount);
 				retryResult = await aQueryRetry(connection, queryArgs);
 				// console.log('[Info][MySQL] Deadlock retry result', retryResult);
-				if(retryResult == -1)
+				if (retryResult == -1)
 					break;
-				else if(retryResult == 0)
+				else if (retryResult == 0)
 					continue;
-				else 
+				else
 					return retryResult;
 			}
 			console.log("[Error][MySQL] query deadlock retry timeout failed.");
@@ -104,7 +106,7 @@ async function aQueryRetry(connection, queryArray) {
 	try {
 		return await util.promisify(connection.query.bind(connection))(...queryArray);
 	} catch (err) {
-		if(err.message.includes('ER_LOCK_DEADLOCK'))
+		if (err.message.includes('ER_LOCK_DEADLOCK'))
 			return 0;
 		else
 			return -1;
@@ -112,7 +114,7 @@ async function aQueryRetry(connection, queryArray) {
 }
 
 function makeRandomString() {
- 	return crypto.randomBytes(20).toString('hex');
+	return crypto.randomBytes(20).toString('hex');
 }
 
 module.exports = {

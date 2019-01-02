@@ -1,5 +1,6 @@
 const express = require('express');
 const group = require('../models/mysql/group');
+const post = require('../models/mysql/post');
 const user = require('../models/mysql/user');
 const cookies = require('../models/mysql/cookies');
 const routerUtil = require('./util');
@@ -75,6 +76,22 @@ router.get('/:uid/privileges', async(req, res) => {
         })
     } else {
         routerUtil.modelCall(req, res, group.checkUserPrivilegeList, [req.params.uid], null, null, null, true);
+    }
+})
+
+router.get('/:uid/posts', async(req, res) => {
+    console.log('in router success');
+    routerUtil.modelCall(req, res, user.getUserPosts, [req.params.uid]);
+})
+
+router.get('/:uid/drafts', async(req, res) => {
+    if(req.params.uid != req.cookies.uid) {
+        res.send({
+            badAuth: true,
+            success: false,
+        })
+    } else {
+        routerUtil.modelCall(req, res, user.getUserDrafts, [req.params.uid], null, null, null, true);
     }
 })
 

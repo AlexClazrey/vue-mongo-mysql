@@ -16,12 +16,12 @@
 import PostCard from '@/components/post-list/PostCard.vue';
 export default {
     props: ['chatheads','ID','nickname','posts'],
-    component:{
+    components: {
         'post-card' : PostCard
     },
     data(){
         return{
-            chatheadsData: this.charheads || '',
+            chatheadsData: this.chatheads || '',
             IDdata: this.ID || 1,
             nicknameData: this.nickname || 'just test',
             postsData: this.posts || [],
