@@ -1,6 +1,5 @@
 const pool = require('./db');
 const cook = require('./cookies');
-const group = require('./group');
 
 // 记得要及时释放连接
 
@@ -27,6 +26,7 @@ async function userLogin(username,password) {
 
 // return uid or null or { msg: <error-msg> }
 async function userRegister(username,nickname,password,email) {
+	const groupApi = require('./group');
 	var con;
 	try {
 		con = await pool.aGet();
@@ -39,11 +39,14 @@ async function userRegister(username,nickname,password,email) {
 			+ con.escape(email)+', @uid);';
 		await pool.aQuery(con, cmd);
 		res = await pool.aQuery(con, 'select @uid;');
+		// console.log(res);
 		if(res.length > 0) {
 			var uid = res[0]['@uid'];
 			if(uid > 0) {
+		// console.log(uid);
 				// add user to default user group
-				await group.addUserToGroup(uid, 1, null);
+				// console.log(groupApi);
+				groupApi.addUserToGroup(uid, 1, null);
 				return uid; // Register success
 			} else {
 				// sql call returns -1 for duplications
@@ -59,6 +62,7 @@ async function userRegister(username,nickname,password,email) {
 		}
 	} catch (err) {
 		console.error('[Error][MySQL] register failed.', cmd);
+		console.log(err);
 		throw err;
 	} finally {
 		pool.release(con);
