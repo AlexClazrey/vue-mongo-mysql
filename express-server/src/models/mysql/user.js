@@ -39,14 +39,11 @@ async function userRegister(username,nickname,password,email) {
 			+ con.escape(email)+', @uid);';
 		await pool.aQuery(con, cmd);
 		res = await pool.aQuery(con, 'select @uid;');
-		// console.log(res);
 		if(res.length > 0) {
 			var uid = res[0]['@uid'];
 			if(uid > 0) {
-		// console.log(uid);
 				// add user to default user group
-				// console.log(groupApi);
-				groupApi.addUserToGroup(uid, 1, null);
+				await groupApi.addUserToGroup(uid, 1, null);
 				return uid; // Register success
 			} else {
 				// sql call returns -1 for duplications
