@@ -1,5 +1,5 @@
 #!/bin/bash
-POS="$(cd "$(dirname "$0")"; pwd -P;)"
+POS="$(cd "$(dirname "$0")"; pwd -P;)/.."
 
 echo "[Info] Clearing old log file."
 cd "$POS"
@@ -18,7 +18,7 @@ NGINXPID=`ps | awk '/nginx/ {print $1}'`;
 if [ -z "$NGINXPID" ]
 then
 	echo "[Info] Starting Nginx.";
-	nginx -c "$POS/nginx.conf";
+	nginx -p ./ -c "$POS/nginx.conf";
 else
 	echo "[Info] Nginx is working."
 	echo "[Info] So not start nginx again."

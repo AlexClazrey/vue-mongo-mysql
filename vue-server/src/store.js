@@ -21,6 +21,7 @@ async function simpleApiCall(context, mutationName, errMsg, apiAsyncFunction, ..
     } else {
       if(data.data.badAuth) {
         // 绝对不能在这里再去提交带权限的simpleApiCall的请求，这个无限循环很可怕的
+	// 就是会有无限的badAuth事件被循环触发
         context.dispatch('userLogout', {
           noRequest: true,
           noRedirect: true,
