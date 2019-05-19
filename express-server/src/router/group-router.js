@@ -55,7 +55,7 @@ router.delete('/user-to-group/:id', async(req, res) => {
 })
 
 router.post('/group-to-privileges', async(req, res) => {
-    routerUtil.modelCall(req, res, group.addPrivilegeToGroup, [req.body.priId, req.body.gid, req.body.permit], null, null, 'user-admin');
+    routerUtil.modelCall(req, res, group.addPrivilegeToGroup, [req.body.priId, req.body.gid, req.body.permit], null, null, 'user admin');
 })
 
 router.delete('/group-to-privileges/', async(req, res) => {

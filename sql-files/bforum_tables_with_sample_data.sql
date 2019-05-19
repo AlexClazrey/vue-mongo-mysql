@@ -689,11 +689,6 @@ CREATE TABLE IF NOT EXISTS `bforum`.`v_post_reply_time` (`pid` INT, `time` INT);
 CREATE TABLE IF NOT EXISTS `bforum`.`v_ubp_list` (`bid` INT, `pid` INT, `uid` INT, `nickname` INT, `portrait` INT, `title` INT, `content` INT, `commit_time` INT, `last_reply_time` INT, `hot` INT, `hits` INT, `pick` INT, `top` INT, `protect` INT);
 
 -- -----------------------------------------------------
--- Placeholder table for view `bforum`.`v_user_post`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `bforum`.`v_user_post` (`pid` INT, `pcid` INT, `uid` INT, `title` INT, `content` INT, `last_edit_time` INT, `hits` INT, `hot` INT, `hide` INT, `deleted` INT, `commit_time` INT);
-
--- -----------------------------------------------------
 -- Placeholder table for view `bforum`.`v_post_relation`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `bforum`.`v_post_relation` (`pid` INT, `p_pid` INT, `bid` INT);
@@ -702,6 +697,16 @@ CREATE TABLE IF NOT EXISTS `bforum`.`v_post_relation` (`pid` INT, `p_pid` INT, `
 -- Placeholder table for view `bforum`.`v_user_draft`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `bforum`.`v_user_draft` (`uid` INT, `pid` INT, `created_time` INT, `last_edit_time` INT, `p_pid` INT, `bid` INT, `title` INT, `content` INT);
+
+-- -----------------------------------------------------
+-- Placeholder table for view `bforum`.`v_user_post`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `bforum`.`v_user_post` (`pid` INT, `pcid` INT, `uid` INT, `title` INT, `content` INT, `last_edit_time` INT, `hits` INT, `hot` INT, `hide` INT, `deleted` INT, `commit_time` INT, `bid` INT, `p_pid` INT);
+
+-- -----------------------------------------------------
+-- Placeholder table for view `bforum`.`v_user_fav`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `bforum`.`v_user_fav` (`uid` INT, `pid` INT, `p_pid` INT, `bid` INT, `title` INT, `content` INT, `commit_time` INT);
 
 -- -----------------------------------------------------
 -- procedure user_register
@@ -1302,6 +1307,26 @@ END$$
 DELIMITER ;
 
 -- -----------------------------------------------------
+-- procedure user_change_pass
+-- -----------------------------------------------------
+
+DELIMITER $$
+USE `bforum`$$
+CREATE PROCEDURE `user_change_pass` (in _uid int, in _old_pass varchar(45), in _new_pass varchar(45), out success int)
+BEGIN
+	set success = null;
+	set success = (select id from `user` where id=_uid and `password`=sha1(sha1(concat(_old_pass, `salt`))));
+    if(success is not null and _new_pass is not null) then
+		update `user` set `password`=sha1(sha1(concat(_new_pass, `salt`))), `password_edit_time`=current_timestamp() where id=_uid;
+        set success = 1;
+	else
+		set success = 0;
+    end if;
+END$$
+
+DELIMITER ;
+
+-- -----------------------------------------------------
 -- View `bforum`.`v_user_mail_core`
 -- -----------------------------------------------------
 DROP TABLE IF EXISTS `bforum`.`v_user_mail_core`;
@@ -1510,19 +1535,6 @@ where pc.deleted = 0
 order by top desc, prt.`time` desc;
 
 -- -----------------------------------------------------
--- View `bforum`.`v_user_post`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `bforum`.`v_user_post`;
-USE `bforum`;
-create  OR REPLACE view `v_user_post` as
-select 
-	vpc.pid as pid, vpc.pcid as pcid, cp.user_id as `uid`, vpc.title as title, vpc.content as content,
-    vpc.last_edit_time as last_edit_time, vpc.hits as hits, vpc.hot as hot, vpc.hide as hide, vpc.deleted as deleted,
-    cp.`time` as commit_time
-from 
-	v_post_content vpc join commit_post cp on vpc.pid = cp.post_id;
-
--- -----------------------------------------------------
 -- View `bforum`.`v_post_relation`
 -- -----------------------------------------------------
 DROP TABLE IF EXISTS `bforum`.`v_post_relation`;
@@ -1547,6 +1559,37 @@ select
 from
 	draft_post join v_post_relation vpr on draft_post.post_id = vpr.pid
     join v_post_content vpc on vpr.pid = vpc.pid;
+
+-- -----------------------------------------------------
+-- View `bforum`.`v_user_post`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `bforum`.`v_user_post`;
+USE `bforum`;
+create  OR REPLACE view `v_user_post` as
+select 
+	vpc.pid as pid, vpc.pcid as pcid, cp.user_id as `uid`, vpc.title as title, vpc.content as content,
+    vpc.last_edit_time as last_edit_time, vpc.hits as hits, vpc.hot as hot, vpc.hide as hide, vpc.deleted as deleted,
+    cp.`time` as commit_time, vpr.bid as bid, vpr.p_pid as p_pid
+from 
+	v_post_content vpc 
+    join commit_post cp on vpc.pid = cp.post_id
+    join v_post_relation vpr on vpc.pid = vpr.pid;
+
+-- -----------------------------------------------------
+-- View `bforum`.`v_user_fav`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `bforum`.`v_user_fav`;
+USE `bforum`;
+CREATE  OR REPLACE VIEW `v_user_fav` AS
+select 
+	favorite_post.`user_id` as uid, favorite_post.post_id as pid,
+    vpr.p_pid as p_pid, vpr.bid as bid,
+    vpc.title as title, vpc.content as content,
+    cp.`time` as commit_time
+from
+	favorite_post join v_post_relation vpr on favorite_post.post_id = vpr.pid
+    join v_post_content vpc on vpr.pid = vpc.pid
+    join commit_post cp on vpr.pid = cp.post_id;
 
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
