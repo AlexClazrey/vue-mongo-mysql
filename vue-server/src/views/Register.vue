@@ -105,6 +105,7 @@ export default {
             if(res.data && res.data.success) {
                 alert('注册成功');
                 this.$store.dispatch('userLogin', res.data);
+                this.$router.push('/posts');
             } else {
                 if(res.data.msg) {
                     alert('注册失败\n' + res.data.msg);
