@@ -230,6 +230,25 @@ async function removeFavPost(pid, uid) {
 	}
 }
 
+async function searchPost(keyword) {
+        var con;
+        try {
+                con = await pool.aGet();
+                // 把 % 放在这个输入里面，escape的作用是防止它和外界的SQL交互。
+				var cmd = 'select post.id as pid, user.id as uid, user.username as username, post_content.title as title, post_content.content as content, commit_post.time as time \
+					from post join post_content join commit_post join user \
+					where user_id = user.id and commit_post.post_id = post.id and post_content.post_id=post.id \
+					and (post_content.content like + ' + con.escape('%'+keyword+'%') + ' or post_content.title like + ' + con.escape('%'+keyword+'%') + ');';
+                var res = await pool.aQuery(con, cmd);
+                return res;
+        } catch (err) {
+                console.error('[Error][MySQL] search error', cmd);
+                throw err;
+        } finally {
+                pool.release(con);
+        }
+}
+
 module.exports = {
 	addPostToBoard,
 	addPostToReply,
@@ -243,5 +262,6 @@ module.exports = {
 	getPostBoard,
 	getRepliesCount,
 	addFavPost,
-	removeFavPost
+	removeFavPost,
+	searchPost,
 };
