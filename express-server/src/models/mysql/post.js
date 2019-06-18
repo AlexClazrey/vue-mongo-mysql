@@ -230,6 +230,20 @@ async function removeFavPost(pid, uid) {
 	}
 }
 
+async function userRemovePost(pid) {
+	var con;
+	try {
+		con = await pool.aGet();
+		var cmd = 'call delete_post_user(' + con.escape(pid) + ')';
+		await pool.aQuery(con, cmd);
+	} catch (err) {
+		console.error('[Error][MySQL] remove post failed', cmd);
+		throw err;
+	} finally {
+		pool.release(con);
+	}
+}
+
 async function searchPost(keyword) {
         var con;
         try {
@@ -242,7 +256,7 @@ async function searchPost(keyword) {
 					+ 'commit_post.time as commit_time, '
 					+ 'post.hot as hot, post.hits as hits '
 					+ 'from post join v_post_relation join post_content join commit_post join user '
-					+ 'where post.id = v_post_relation.pid and user_id = user.id and commit_post.post_id = post.id and post_content.post_id=post.id '
+					+ 'where post.id = v_post_relation.pid and user_id = user.id and commit_post.post_id = post.id and post_content.post_id=post.id and post.deleted=0 '
 					+ 'and (post_content.content like + ' + con.escape('%'+keyword+'%') + ' or post_content.title like + ' + con.escape('%'+keyword+'%') + ');';
                 var res = await pool.aQuery(con, cmd);
                 return res;
@@ -269,4 +283,5 @@ module.exports = {
 	addFavPost,
 	removeFavPost,
 	searchPost,
+	userRemovePost,
 };

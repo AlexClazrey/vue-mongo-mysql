@@ -4,7 +4,7 @@ v-card.pt-2(flat style="max-width: 1300px; margin: 0 auto;")
     v-card.ma-5
       v-layout(fill-height)
         v-flex(xs3)
-          v-list.teal.lighten-2
+          v-list.teal.lighten-2(style="height: 100%;")
             v-list-tile(v-for="link in links" :key="link.text" router :to="link.to")
               v-list-tile-action
                 v-icon.white--text {{ link.icon }}

@@ -44,7 +44,7 @@ const router = new Router({
       name: 'login',
       component: Login,
       meta: {
-        title: 'BeForum Login'
+        title: 'Login - Beforum'
       }
     },
     {
@@ -52,21 +52,23 @@ const router = new Router({
       name: 'register',
       component: Register,
       meta: {
-        title: 'BeForum Register'
+        title: 'Register - Beforum'
       }
     },
     {
       path: '/posts',
       component: Posts,
+      meta: { title: 'Posts - Beforum' },
       children: [
         { path: '', name: 'all-posts', component: PostLister },
         { path: ':bid', name: 'board-posts', component: PostLister },
-      ]
+      ],
     },
     {
       path: '/post/read/:pid',
       name: 'read-post',
       component: PostRead,
+      meta: { title: 'Post - Beforum' },
     },
     {
       path: '/post/add',

@@ -159,11 +159,7 @@ router.delete('/draft/:pid', async (req, res) => {
 
 // TODO user delete post
 router.delete('/:pid', async (req, res) => {
-    try {
-
-    } catch(err) {
-        
-    }
+    routerUtil.modelCall(req, res, post.userRemovePost, [req.params.pid], null, null, null, true);
 });
 
 // TODO admin delete post

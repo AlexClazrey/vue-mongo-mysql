@@ -34,5 +34,8 @@ export default {
 	search(keyword) {
 		return ax.get('/search/' + encodeURIComponent(keyword));
 	},
+	userRemovePost(pid) {
+		return ax.delete('/' + pid);
+	}
 };
 

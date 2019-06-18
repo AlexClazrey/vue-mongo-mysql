@@ -26,7 +26,7 @@ v-card.white.lighten-5.py-1.px-3()
           v-btn(flat color="red" small slot="activator" :loading="menuLoading")
             v-icon menu
           v-list.red
-            v-list-tile(v-for="(item, index) in menuItems" :key="index", @click="item.callback(postId)")
+            v-list-tile(v-for="(item, index) in menuItems.filter(it => it.visible())" :key="index", @click="item.callback(postId)")
               v-list-tile-action
                 v-icon.white--text(style="margin: 0 auto;") {{ item.icon }}
               v-list-tile-title(v-if='item.title') {{ item.title }}
@@ -58,7 +58,8 @@ export default {
   data() {
     return {
       menuItems: [
-        {title: '', icon:'favorite', callback: this.addToFav }
+        {title: '', icon:'favorite', callback: this.addToFav, visible: () => true },
+        {title: '', icon:'delete_forever', callback: this.userRemovePost, visible: ()=> this.post.uid==this.$store.getters.uid}
       ],
       menuLoading: false,
     }
@@ -88,9 +89,17 @@ export default {
         return;
       }
       this.menuLoading = true;
-      postApi.addFav(pid, this.$store.getters.uid);
+      await postApi.addFav(pid, this.$store.getters.uid);
       this.menuLoading = false;
-    }
-  }
+    },
+    async userRemovePost(pid) {
+      if(confirm('Do you want to delete this post?')) {
+        this.menuLoading = true;
+        await postApi.userRemovePost(pid);
+        this.menuLoading = false;
+      }
+    },
+  },
+
 }
 </script>
