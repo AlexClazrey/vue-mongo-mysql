@@ -1,19 +1,21 @@
 <template>
     <div id="login">
-        <h1>Welcome to our forum!</h1>
-        <div class="login-model">
-            <div class="user-name">
-                <input class="text" type="text" placeholder="Username" v-model="username">
-                <p v-if="this.username.length > 0 && usernameInvalid">用户名里只会出现小写字母和数字。</p>
+        <v-card flat style="background-color:transparent; max-width: 1300px; margin: 0 auto;">
+            <h1>Login form</h1>
+            <div class="login-model">
+                <div class="box-container user-name">
+                    <input class="px-3 py-2" v-model="username" placeholder="Username" style="display: block; width: 400px; height: 40px; margin: 0 auto;">
+                    <p v-if="this.username.length > 0 && usernameInvalid">用户名里只会出现小写字母和数字。</p>
+                </div>
+                <div class="box-container user-password">
+                    <input class="px-3 py-2" v-model="password" placeholder="Password" style="display: block; width: 400px; height: 40px; margin: 0 auto;">
+                </div>
+                <div class="buttons">
+                    <button class="register" @click="setNewuser">REGISTER</button>
+                    <button class="login-confirm" @click="confirmLogin">LOGIN</button>
+                </div>
             </div>
-            <div class="user-password">
-                <input class="pass" type="password" placeholder="Password" v-model="password">
-            </div>
-            <div class="buttons">
-                <button class="login-confirm" @click="confirmLogin">Login</button>
-                <button class="register" @click="setNewuser">Register</button>
-            </div>
-        </div>
+        </v-card>
     </div>
 </template>
 
@@ -70,10 +72,16 @@ export default {
 
 <style scoped>
 #login {
-    font-family: monospace;
+    font-family: sans-serif;
     text-align: center;
-    color:teal;
-    margin-top: 100px;
+    /* color:teal; */
+    margin-top: 80px;
+}
+#login h1 {
+    margin-bottom: 50px;
+}
+#login .box-container {
+    margin-bottom: 20px;
 }
 input {
     background-repeat: no-repeat;
@@ -91,9 +99,9 @@ button {
     margin-right: 20px;
     text-align: center;
     text-decoration: #e0dede;
-    width: 100px;
+    width: 130px;
     height: 50px;
-    border-radius: 15px;
+    border-radius: 2px;
     font-family: monospace;
 }
 .text{
@@ -103,6 +111,9 @@ button {
     background-image: url(../assets/user_password.png);
 }
 .login-confirm {
-    background-color: crimson;
+    background-color: lightsalmon;
+}
+button.register {
+    background-color: lightseagreen
 }
 </style>
