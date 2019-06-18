@@ -30,9 +30,9 @@ v-card.white.lighten-5.py-1.px-3()
               v-list-tile-action
                 v-icon.white--text(style="margin: 0 auto;") {{ item.icon }}
               v-list-tile-title(v-if='item.title') {{ item.title }}
-        v-btn(flat color="blue" small v-if="!readingPost" router :to="{name:'read-post', params:{ pid: parentId }}")
+        v-btn(flat color="blue" small v-if="!readingPost || isSearch" router :to="{name:'read-post', params:{ pid: post.p_pid || parentId }}")
           v-icon arrow_forward
-        v-btn(flat color="teal" small v-if="!isReply" router :to="{name:'reply-post', params:{ rpid: post.pid }}")
+        v-btn(flat color="teal" small v-if="!isReply && !isSearch" router :to="{name:'reply-post', params:{ rpid: post.p_pid || post.pid }}")
           v-icon reply
     v-flex(xs2)
       v-btn(flat small color="red" :disabled="!post.hot" v-if="!isReply")
@@ -48,7 +48,8 @@ export default {
   props: {
     post: Object,
     isReply: Boolean,
-    isLastReply: Boolean,
+    isLastReply: Boolean, // unused
+    isSearch: { type: Boolean, default: false },
     readingPost: {
       type: Boolean,
       default: false,

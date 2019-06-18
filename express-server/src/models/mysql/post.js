@@ -235,10 +235,15 @@ async function searchPost(keyword) {
         try {
                 con = await pool.aGet();
                 // 把 % 放在这个输入里面，escape的作用是防止它和外界的SQL交互。
-				var cmd = 'select post.id as pid, user.id as uid, user.username as username, post_content.title as title, post_content.content as content, commit_post.time as time \
-					from post join post_content join commit_post join user \
-					where user_id = user.id and commit_post.post_id = post.id and post_content.post_id=post.id \
-					and (post_content.content like + ' + con.escape('%'+keyword+'%') + ' or post_content.title like + ' + con.escape('%'+keyword+'%') + ');';
+				var cmd = 'select post.id as pid, v_post_relation.p_pid as p_pid, '
+					+ 'user.id as uid, user.username as nickname, '
+					+ 'post_content.title as title, '
+					+ 'post_content.content as content, '
+					+ 'commit_post.time as commit_time, '
+					+ 'post.hot as hot, post.hits as hits '
+					+ 'from post join v_post_relation join post_content join commit_post join user '
+					+ 'where post.id = v_post_relation.pid and user_id = user.id and commit_post.post_id = post.id and post_content.post_id=post.id '
+					+ 'and (post_content.content like + ' + con.escape('%'+keyword+'%') + ' or post_content.title like + ' + con.escape('%'+keyword+'%') + ');';
                 var res = await pool.aQuery(con, cmd);
                 return res;
         } catch (err) {

@@ -31,5 +31,8 @@ export default {
 	removeFav(pid) {
 		return ax.delete('/fav/' + pid);
 	},
+	search(keyword) {
+		return ax.get('/search/' + encodeURIComponent(keyword));
+	},
 };
 

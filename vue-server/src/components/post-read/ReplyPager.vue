@@ -21,7 +21,7 @@ v-layout(row wrap)
               v-btn(color="grey darken-3 white--text", block, flat, :disabled="empty" @click="nextPage") 
                 v-icon(left) chevron_right
                 span next page
-  v-flex(xs12 md3 align-center)
+  v-flex(xs12 md3 align-center v-if="!noReplyButton")
     v-card.py-2.px-3.green.lighten-5(flat)
       v-btn.teal.white--text(block flat :to="{name: 'reply-post', params: {rpid: pid}}")
         v-icon(left) reply
@@ -34,7 +34,8 @@ export default {
     page: Number,
     failed: Boolean,
     empty: Boolean,
-    pid: Number,
+    pid: { type: Number, default: 0 }, // used in reply button
+    noReplyButton: { type: Boolean, default: false },
   },
   methods: {
     firstPage() { this.updatePage(1); },

@@ -23,7 +23,7 @@
     <v-footer class="main-footer" color="#3a3737" dark absolute height="auto">
       <v-card class="flex" color="#3a3737" flat tile>
         <v-card-actions class="justify-center">
-          <p>Copyright &copy; 2018 BeForum</p>
+          <p>Copyright &copy; 2019 BeForum</p>
         </v-card-actions>
       </v-card>
     </v-footer>

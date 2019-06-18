@@ -9,6 +9,7 @@ import AdminPanel from '@/views/AdminPanel.vue'
 import Posts from '@/views/PostList.vue' 
 import PostRead from '@/views/PostRead.vue'
 import PostEdit from '@/views/PostEdit.vue'
+import PostSearch from '@/views/PostSearch.vue'
 import MySpace from '@/views/MySpace.vue'
 import UserPage from '@/views/UserPage.vue'
 
@@ -91,6 +92,11 @@ const router = new Router({
       path: '/admin-panel',
       name: 'admin-panel',
       component: AdminPanel
+    },
+    {
+      path: '/post/search/:keyword',
+      name: 'post-search',
+      component: PostSearch
     },
     {
       path: '/my-space',

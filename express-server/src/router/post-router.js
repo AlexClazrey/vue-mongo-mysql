@@ -145,7 +145,7 @@ router.delete('/fav/:pid', async(req, res)=> {
 })
 
 router.get('/search/:keyword', async(req, res) => {
-    routerUtil.modelCall(req, res, post.searchPost, [req.params.keyword], null, null, null, false);
+    routerUtil.modelCall(req, res, post.searchPost, [decodeURIComponent(req.params.keyword)], null, null, null, false);
 });
 
 // TODO delete draft

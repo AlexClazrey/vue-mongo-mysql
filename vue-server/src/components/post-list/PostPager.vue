@@ -22,10 +22,11 @@ v-layout(row wrap)
                 v-icon(left) chevron_right
                 span next page
   v-flex(xs12 md3 align-center)
-    v-card.py-2.px-3.pink.lighten-5(flat)
+    v-card.py-2.px-3.pink.lighten-5(flat v-if="!noAddButton")
       v-btn.pink.white--text(block flat :to="{name: 'add-post-to-board', params: {bid: bid}}")
         v-icon(left) add_circle_outline
-        span add post    
+        span add post
+    v-card.px-4.py-2.blue-grey.lighten-5.button-placeholder(flat v-if="noAddButton")
 </template>
 
 <script>
@@ -34,7 +35,8 @@ export default {
     page: Number,
     failed: Boolean,
     empty: Boolean,
-    bid: Number,
+    bid: { type: Number, default: 0 }, // used in add post button
+    noAddButton: { type: Boolean, default: false },
   },
   methods: {
     firstPage() { this.updatePage(1); },
@@ -45,3 +47,10 @@ export default {
   }
 }
 </script>
+
+<style>
+.button-placeholder {
+  height: 100%;
+}
+</style>
+
