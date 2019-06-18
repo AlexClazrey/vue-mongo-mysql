@@ -103,6 +103,7 @@ export default {
         var result = await postApi.userRemovePost(pid);
         if(result.data && result.data.success) {
           alert('删除成功');
+          this.$router.go();
         } else {
           alert('删除失败');
         }
