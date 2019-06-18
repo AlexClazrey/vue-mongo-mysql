@@ -1,31 +1,31 @@
 <template>
     <div id="register">
-        <h1>register</h1>
+        <h1>Register form</h1>
         <div>
-            <div>
-                <input class="noimage" placeholder="username" v-model="table.username">
+            <div class="input-container">
+                <input class="regis px-3 py-2" v-model="table.username" placeholder="username" style="">
                 <p v-if="table.username.length > 0 && usernameInvalid">{{ warning.username }}</p>
             </div>
-            <div>
-                <input class="noimage" placeholder="password" v-model="table.pass" type="password">
+            <div class="input-container">
+                <input class="regis px-3 py-2" placeholder="password" v-model="table.pass" type="password">
                 <p v-if="table.pass.length > 0 && passInvalid">{{ warning.pass }}</p>
             </div>
-            <div>
-                <input class="noimage" placeholder="repeat password" v-model="table.repeatPass" type="password">
+            <div class="input-container">
+                <input class="regis px-3 py-2" placeholder="repeat password" v-model="table.repeatPass" type="password">
                 <p v-if="table.repeatPass.length > 0 && passNotMatch">{{ warning.repeatPass }}</p>
             </div>
-            <div>
-                <input class="noimage" placeholder="nickname" v-model="table.nickname">
+            <div class="input-container">
+                <input class="regis px-3 py-2" placeholder="nickname" v-model="table.nickname">
                 <p v-if="table.nickname.length > 0 && nicknameInvalid">{{ warning.nickname }}</p>
             </div>
-            <div>
-                <input class="noimage" placeholder="email address" v-model="table.email">
+            <div class="input-container">
+                <input class="regis px-3 py-2" placeholder="email address" v-model="table.email">
                 <p v-if="table.email.length > 0 && emailInvalid">{{ warning.email }}</p>
             </div>
             <div>
                 <p v-if="loading">载入中... </p>
             </div>
-            <button class="commit" @click="commitClick">Commit</button>
+            <button class="commit" @click="commitClick">COMMIT</button>
         </div>
     </div>
 </template>
@@ -120,22 +120,30 @@ export default {
 
 <style scoped>
 #register {
-    font-family: monospace;
+    font-family: sans-serif;
     text-align: center;
-    color:teal;
-    margin-top: 100px;
+    /* color:teal; */
 }
-.noimage{
-    padding-left: 10px;
-    width: 240px;
+#register h1 {
+    margin-top: 80px;
+    margin-bottom: 40px; 
 }
-.commit {
-    background-color: darkgray;
+button.commit {
+    margin-top: 30px;
+    background-color: lightcoral;
     height: 40px;
-    width: 240px; 
+    width: 300px; 
 }
 .error-alert {
     color:crimson;
     font-size: 12px;
+}
+.regis {
+    border: 1px solid #e0dede;
+    font-family: monospace;
+    display: block; width: 400px; height: 40px; margin: 0 auto;
+}
+.input-container {
+    margin-bottom: 10px;
 }
 </style>
