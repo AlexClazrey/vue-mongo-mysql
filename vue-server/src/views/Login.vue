@@ -4,11 +4,11 @@
             <h1>Login form</h1>
             <div class="login-model">
                 <div class="box-container user-name">
-                    <input class="px-3 py-2" v-model="username" placeholder="Username" style="display: block; width: 400px; height: 40px; margin: 0 auto;">
+                    <input class="px-3 py-2" v-model="username" type="text" placeholder="Username" style="display: block; width: 400px; height: 40px; margin: 0 auto;">
                     <p v-if="this.username.length > 0 && usernameInvalid">用户名里只会出现小写字母和数字。</p>
                 </div>
                 <div class="box-container user-password">
-                    <input class="px-3 py-2" v-model="password" placeholder="Password" style="display: block; width: 400px; height: 40px; margin: 0 auto;">
+                    <input class="px-3 py-2" v-model="password" type="password" placeholder="Password" style="display: block; width: 400px; height: 40px; margin: 0 auto;">
                 </div>
                 <div class="buttons">
                     <button class="register" @click="setNewuser">REGISTER</button>
