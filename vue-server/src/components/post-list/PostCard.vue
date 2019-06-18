@@ -25,8 +25,8 @@ v-card.white.lighten-5.py-1.px-3()
         v-menu(offset-y)
           v-btn(flat color="red" small slot="activator" :loading="menuLoading")
             v-icon menu
-          v-list.red
-            v-list-tile(v-for="(item, index) in menuItems.filter(it => it.visible())" :key="index", @click="item.callback(postId)")
+          v-list.green.lighten-4
+            v-list-tile(v-for="(item, index) in menuItems.filter(it => it.visible())" :key="index", :class="item.class", @click="item.callback(postId)")
               v-list-tile-action
                 v-icon.white--text(style="margin: 0 auto;") {{ item.icon }}
               v-list-tile-title(v-if='item.title') {{ item.title }}
@@ -58,8 +58,8 @@ export default {
   data() {
     return {
       menuItems: [
-        {title: '', icon:'favorite', callback: this.addToFav, visible: () => true },
-        {title: '', icon:'delete_forever', callback: this.userRemovePost, visible: ()=> this.post.uid==this.$store.getters.uid}
+        {title: '', icon:'favorite', class:'red', callback: this.addToFav, visible: () => true },
+        {title: '', icon:'delete_forever', class: 'grey darken-3', callback: this.userRemovePost, visible: ()=> this.post.uid==this.$store.getters.uid}
       ],
       menuLoading: false,
     }
@@ -89,13 +89,23 @@ export default {
         return;
       }
       this.menuLoading = true;
-      await postApi.addFav(pid, this.$store.getters.uid);
+      var result = await postApi.addFav(pid, this.$store.getters.uid);
+      if(result.data && result.data.success) {
+        alert('收藏成功');
+      } else {
+        alert('收藏失败');
+      }
       this.menuLoading = false;
     },
     async userRemovePost(pid) {
       if(confirm('Do you want to delete this post?')) {
         this.menuLoading = true;
-        await postApi.userRemovePost(pid);
+        var result = await postApi.userRemovePost(pid);
+        if(result.data && result.data.success) {
+          alert('删除成功');
+        } else {
+          alert('删除失败');
+        }
         this.menuLoading = false;
       }
     },

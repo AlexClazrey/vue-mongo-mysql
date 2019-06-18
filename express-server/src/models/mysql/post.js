@@ -230,12 +230,18 @@ async function removeFavPost(pid, uid) {
 	}
 }
 
-async function userRemovePost(pid) {
+async function userRemovePost(pid, uid) {
 	var con;
 	try {
 		con = await pool.aGet();
-		var cmd = 'call delete_post_user(' + con.escape(pid) + ')';
-		await pool.aQuery(con, cmd);
+		var cmd = 'select user_id  from commit_post where post_id='+con.escape(pid)+' and user_id='+con.escape(uid)+';';
+		var res = await pool.aQuery(con, cmd);
+		if(res.length > 0) {
+			cmd = 'call delete_post_user(' + con.escape(pid) + ')';
+			await pool.aQuery(con, cmd);
+		} else {
+			throw new Error('user is not post author');
+		}
 	} catch (err) {
 		console.error('[Error][MySQL] remove post failed', cmd);
 		throw err;

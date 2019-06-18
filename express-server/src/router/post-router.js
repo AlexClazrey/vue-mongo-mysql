@@ -157,9 +157,9 @@ router.delete('/draft/:pid', async (req, res) => {
     }
 });
 
-// TODO user delete post
+// TODO check uid is post author - user delete post
 router.delete('/:pid', async (req, res) => {
-    routerUtil.modelCall(req, res, post.userRemovePost, [req.params.pid], null, null, null, true);
+    routerUtil.modelCall(req, res, post.userRemovePost, [req.params.pid, req.cookies.uid], null, null, null, true);
 });
 
 // TODO admin delete post
