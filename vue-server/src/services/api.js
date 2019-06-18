@@ -2,9 +2,11 @@ import axios from 'axios';
 import conf from '@/../config.json';
 
 export default(prefix) => {
+	var host = document.baseURI.substr(document.baseURI.indexOf('://') + 3);
+	host = host.substring(0, host.indexOf('/'));
 	var apiAddress = 
 		conf.apiServer.protocol
-		+ conf.webServer.host + ":" + conf.webServer.port
+		+ host + '/'
 		+ conf.apiServer.prefix;
 	if(prefix) {
 		apiAddress += prefix;
