@@ -1,9 +1,11 @@
 <template lang="pug">
 v-card(flat)
     v-card(flat v-if='!loading')
-        simple-post-card(v-for="post in posts" :key="post.pid" :post="post")
-        v-card.mx-4.my-3(flat v-if="posts.length == 0")
-            p.headline No posts here.
+        simple-post-card(v-for="post in posts.filter(it=>!it.deleted)" :key="post.pid" :post="post")
+        v-card.mx-4.my-3(flat v-if="posts.length == 0 && !failed && !loading")
+            p.headline You haven't posted anything or all your posts have been deleted.
+        v-card.mx-4.my-3(flat v-if="loading")
+            p.headline Loading...
 </template>
 
 <script>
@@ -19,6 +21,7 @@ export default {
     data() {
         return {
             loading: false,
+            failed: false,
             posts: [],
         }
     },
@@ -39,6 +42,7 @@ export default {
                 this.posts = res.data.data;
             } else {
                 alert('获取帖子数据失败.');
+                this.failed = true;
             }
         },
     }
