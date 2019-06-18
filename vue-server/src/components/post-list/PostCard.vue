@@ -25,7 +25,7 @@ v-card.white.lighten-5.py-1.px-3()
         v-menu(offset-y)
           v-btn(flat color="red" small slot="activator" :loading="menuLoading")
             v-icon menu
-          v-list.green.lighten-4
+          v-list.red
             v-list-tile(v-for="(item, index) in menuItems.filter(it => it.visible())" :key="index", :class="item.class", @click="item.callback(postId)")
               v-list-tile-action
                 v-icon.white--text(style="margin: 0 auto;") {{ item.icon }}
