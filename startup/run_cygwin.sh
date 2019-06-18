@@ -18,7 +18,7 @@ NGINXPID=`ps | awk '/nginx/ {print $1}'`;
 if [ -z "$NGINXPID" ]
 then
 	echo "[Info] Starting Nginx.";
-	nginx -p ./ -c "$POS/nginx.conf";
+	nginx -p ./ -c "$POS/startup/nginx.conf";
 else
 	echo "[Info] Nginx is working."
 	echo "[Info] So not start nginx again."
