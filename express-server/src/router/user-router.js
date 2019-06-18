@@ -75,6 +75,7 @@ router.get('/:uid/info', async(req, res) => {
 router.get('/:uid/privileges', async(req, res) => {
     if(req.params.uid != req.cookies.uid) {
         res.send({
+	    msg: 'url uid != cookies uid',
             badAuth: true,
             success: false,
         })
